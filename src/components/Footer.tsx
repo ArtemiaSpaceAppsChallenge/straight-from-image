@@ -2,40 +2,44 @@ import { Shield } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="py-16 px-6 border-t border-border">
+    <footer className="py-16 px-6 border-t border-white/15 backdrop-blur-[2px] relative z-10 mt-auto">
       <div className="container mx-auto">
-        <div className="grid md:grid-cols-4 gap-12">
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-16 h-16 border-2 border-foreground rounded flex items-center justify-center">
-                <Shield className="w-8 h-8 text-foreground" />
-              </div>
+        <div className="grid grid-cols-4 gap-12 items-start">
+          <div className="flex items-center justify-center">
+            <div className="w-[239px] h-[239px] flex items-center justify-center">
+              <Shield className="w-32 h-32 text-foreground" />
             </div>
           </div>
           
-          <div className="space-y-3">
-            <h4 className="text-foreground font-semibold mb-4">Link do video</h4>
-            <a href="#" className="block text-muted-foreground hover:text-primary transition-colors text-sm">
-              Github
+          <div className="space-y-[67px]">
+            <h4 className="text-foreground text-xl leading-6">
+              Link do vídeo
+            </h4>
+            <a href="#" className="block text-foreground hover:text-primary transition-colors text-xl leading-6">
+              Gitub
             </a>
           </div>
           
-          <div className="space-y-3">
-            <h4 className="text-foreground font-semibold mb-4">Seção 1</h4>
-            <a href="#" className="block text-muted-foreground hover:text-primary transition-colors text-sm">
+          <div className="space-y-[57px]">
+            <h4 className="text-foreground text-xl leading-6">
+              Seção 1
+            </h4>
+            <a href="#" className="block text-foreground hover:text-primary transition-colors text-xl leading-6">
               Seção 1
             </a>
-            <a href="#" className="block text-muted-foreground hover:text-primary transition-colors text-sm">
+            <a href="#" className="block text-foreground hover:text-primary transition-colors text-xl leading-6">
               Seção 1
             </a>
           </div>
           
-          <div className="space-y-3">
-            <h4 className="text-foreground font-semibold mb-4">Seção 1</h4>
-            <a href="#" className="block text-muted-foreground hover:text-primary transition-colors text-sm">
+          <div className="space-y-[57px]">
+            <h4 className="text-foreground text-xl leading-6">
+              Seção 1
+            </h4>
+            <a href="#" className="block text-foreground hover:text-primary transition-colors text-xl leading-6">
               Seção 1
             </a>
-            <a href="#" className="block text-muted-foreground hover:text-primary transition-colors text-sm">
+            <a href="#" className="block text-foreground hover:text-primary transition-colors text-xl leading-6">
               Seção 1
             </a>
           </div>
