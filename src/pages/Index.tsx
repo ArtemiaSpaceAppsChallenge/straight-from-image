@@ -1,7 +1,10 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
-import InfoCards from "@/components/InfoCards";
+import Challenge from "@/components/Challenge";
+import Solution from "@/components/Solution";
 import FeaturesMVP from "@/components/FeaturesMVP";
+import About from "@/components/About";
+import Roadmap from "@/components/Roadmap";
 import Footer from "@/components/Footer";
 import BackgroundEffects from "@/components/BackgroundEffects";
 
@@ -12,8 +15,11 @@ const Index = () => {
       <Header />
       <main>
         <Hero />
-        <InfoCards />
+        <Challenge />
+        <Solution />
         <FeaturesMVP />
+        <About />
+        <Roadmap />
       </main>
       <Footer />
     </div>

@@ -1,4 +1,4 @@
-import { Shield } from "lucide-react";
+import { Shield, Github, Video } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -12,37 +12,51 @@ const Footer = () => {
           </div>
           
           <div className="space-y-6 md:space-y-8 lg:space-y-[67px] text-center md:text-left">
-            <h4 className="text-foreground text-lg md:text-xl leading-6">
-              Link do vídeo
+            <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
+              Resources
             </h4>
-            <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Gitub
+            <a href="#" className="flex items-center justify-center md:justify-start gap-2 text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              <Video className="w-5 h-5" />
+              Demo Video
+            </a>
+            <a href="#" className="flex items-center justify-center md:justify-start gap-2 text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              <Github className="w-5 h-5" />
+              GitHub
             </a>
           </div>
           
           <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
-            <h4 className="text-foreground text-lg md:text-xl leading-6">
-              Seção 1
+            <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
+              Navigation
             </h4>
-            <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Seção 1
+            <a href="#about" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              About
             </a>
-            <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Seção 1
+            <a href="#roadmap" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              Roadmap
+            </a>
+            <a href="/play" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              Play
             </a>
           </div>
           
           <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
-            <h4 className="text-foreground text-lg md:text-xl leading-6">
-              Seção 1
+            <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
+              Legal
             </h4>
             <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Seção 1
+              Privacy Policy
             </a>
             <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Seção 1
+              Terms of Service
             </a>
           </div>
+        </div>
+        
+        <div className="mt-12 pt-8 border-t border-white/15 text-center">
+          <p className="text-muted-foreground text-sm md:text-base">
+            © 2025 Artemis Habitat Designer. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

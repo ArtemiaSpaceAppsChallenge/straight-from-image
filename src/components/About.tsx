@@ -1,0 +1,88 @@
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+
+const teamMembers = [
+  {
+    name: "Dr. Sarah Chen",
+    role: "Aerospace Systems Engineer",
+    description: "15+ years designing life support systems for NASA missions",
+    initials: "SC",
+  },
+  {
+    name: "Marcus Johnson",
+    role: "Habitat Architect",
+    description: "Specialized in extreme environment habitation design",
+    initials: "MJ",
+  },
+  {
+    name: "Dr. Priya Patel",
+    role: "ECLSS Specialist",
+    description: "Expert in Environmental Control and Life Support Systems",
+    initials: "PP",
+  },
+  {
+    name: "Alex Rodriguez",
+    role: "Simulation Engineer",
+    description: "Develops predictive modeling for resource consumption",
+    initials: "AR",
+  },
+  {
+    name: "Dr. Yuki Tanaka",
+    role: "Human Factors Researcher",
+    description: "Studies crew psychology and workflow optimization",
+    initials: "YT",
+  },
+  {
+    name: "Emma Williams",
+    role: "Systems Integration Lead",
+    description: "Coordinates multi-disciplinary engineering teams",
+    initials: "EW",
+  },
+];
+
+const About = () => {
+  return (
+    <section id="about" className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-12 relative z-10">
+      <div className="w-full max-w-7xl mx-auto">
+        <div className="text-center mb-8 md:mb-12 lg:mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            Our Team
+          </h2>
+          <p className="text-foreground text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
+            A multidisciplinary team of aerospace engineers, system architects, and human factors specialists dedicated to advancing space habitat technology.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {teamMembers.map((member) => (
+            <Card key={member.name} className="bg-white/5 border-white/15 backdrop-blur-[2px]">
+              <CardHeader className="text-center">
+                <div className="flex justify-center mb-4">
+                  <Avatar className="w-20 h-20 md:w-24 md:h-24">
+                    <AvatarImage src="" alt={member.name} />
+                    <AvatarFallback className="bg-gradient-to-br from-[#00B6DA] to-[#5045BF] text-white text-xl font-bold">
+                      {member.initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </div>
+                <CardTitle className="text-foreground text-xl md:text-2xl">
+                  {member.name}
+                </CardTitle>
+                <CardDescription className="text-primary text-sm md:text-base font-semibold">
+                  {member.role}
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-foreground text-sm md:text-base text-center leading-relaxed">
+                  {member.description}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default About;
