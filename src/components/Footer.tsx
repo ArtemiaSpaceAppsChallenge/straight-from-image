@@ -6,28 +6,6 @@ import { Button } from "@/components/ui/button";
 const Footer = () => {
   return (
     <footer className="py-12 md:py-16 px-4 md:px-6 lg:px-12 border-t border-white/15 backdrop-blur-[2px] relative z-10 mt-auto">
-      {/* Newsletter */}
-        <div className="mt-8 pt-8 border-t border-white/15">
-          <div className="max-w-md mx-auto text-center">
-            <h4 className="text-foreground text-lg md:text-xl font-bold mb-2">
-              Stay Updated on Artemis Missions
-            </h4>
-            <p className="text-muted-foreground text-sm mb-4">
-              Get the latest updates on habitat design innovations
-            </p>
-            <div className="flex gap-2">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
-                className="bg-white/5 border-white/15 text-foreground placeholder:text-muted-foreground"
-              />
-              <Button className="bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90">
-                <Mail className="w-4 h-4 mr-2" />
-                Subscribe
-              </Button>
-            </div>
-          </div>
-        </div>
       <div className="w-full max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 items-start">
           <div className="flex items-center justify-center md:justify-start">
