@@ -1,4 +1,7 @@
-import { Shield, Github, Video } from "lucide-react";
+import { Shield, Github, Video, Mail, Rocket } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const Footer = () => {
   return (
@@ -50,6 +53,51 @@ const Footer = () => {
             <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
               Terms of Service
             </a>
+          </div>
+        </div>
+        
+        {/* Partners & Compliance */}
+        <div className="mt-12 pt-8 border-t border-white/15">
+          <h4 className="text-foreground text-lg md:text-xl font-bold text-center mb-6">
+            Partners & Compliance
+          </h4>
+          <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-8">
+            <Badge variant="outline" className="border-primary/50 text-primary px-4 py-2">
+              <Rocket className="w-4 h-4 mr-2" />
+              NASA Standards
+            </Badge>
+            <Badge variant="outline" className="border-primary/50 text-primary px-4 py-2">
+              ESA Certified
+            </Badge>
+            <Badge variant="outline" className="border-primary/50 text-primary px-4 py-2">
+              ISO 14644
+            </Badge>
+            <Badge variant="outline" className="border-primary/50 text-primary px-4 py-2">
+              Artemis Program
+            </Badge>
+          </div>
+        </div>
+
+        {/* Newsletter */}
+        <div className="mt-8 pt-8 border-t border-white/15">
+          <div className="max-w-md mx-auto text-center">
+            <h4 className="text-foreground text-lg md:text-xl font-bold mb-2">
+              Stay Updated on Artemis Missions
+            </h4>
+            <p className="text-muted-foreground text-sm mb-4">
+              Get the latest updates on habitat design innovations
+            </p>
+            <div className="flex gap-2">
+              <Input 
+                type="email" 
+                placeholder="Enter your email" 
+                className="bg-white/5 border-white/15 text-foreground placeholder:text-muted-foreground"
+              />
+              <Button className="bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90">
+                <Mail className="w-4 h-4 mr-2" />
+                Subscribe
+              </Button>
+            </div>
           </div>
         </div>
         

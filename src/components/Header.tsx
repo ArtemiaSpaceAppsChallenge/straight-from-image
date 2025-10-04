@@ -1,8 +1,11 @@
 import { Shield, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 
 const Header = () => {
+  const { navigateHome } = useSmartNavigation();
+
   return (
     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-[5.2px]">
       <div className="w-full px-4 md:px-6 lg:px-12 xl:px-24">
@@ -15,9 +18,12 @@ const Header = () => {
           </Link>
           
           <nav className="flex items-center gap-3 md:gap-6 lg:gap-8">
-            <a href="/" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={navigateHome}
+              className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors cursor-pointer"
+            >
               HOME
-            </a>
+            </button>
             <a href="#about" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
               ABOUT
             </a>

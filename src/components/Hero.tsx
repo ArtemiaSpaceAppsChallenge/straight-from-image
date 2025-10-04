@@ -1,4 +1,4 @@
-import { Play } from "lucide-react";
+import { Play, Rocket, Satellite, Users, Gauge } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 
@@ -31,6 +31,30 @@ const Hero = () => {
               >
                 View Zoning Rules
               </Button>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mt-6 lg:mt-8">
+              <div className="bg-white/5 border border-white/15 rounded-xl p-3 lg:p-4 backdrop-blur-[2px]">
+                <Rocket className="w-5 h-5 lg:w-6 lg:h-6 text-primary mb-2" />
+                <div className="text-xl lg:text-2xl font-bold text-foreground">50+</div>
+                <div className="text-xs lg:text-sm text-muted-foreground">Configurations</div>
+              </div>
+              <div className="bg-white/5 border border-white/15 rounded-xl p-3 lg:p-4 backdrop-blur-[2px]">
+                <Satellite className="w-5 h-5 lg:w-6 lg:h-6 text-primary mb-2" />
+                <div className="text-xl lg:text-2xl font-bold text-foreground">NASA</div>
+                <div className="text-xs lg:text-sm text-muted-foreground">ECLSS Standard</div>
+              </div>
+              <div className="bg-white/5 border border-white/15 rounded-xl p-3 lg:p-4 backdrop-blur-[2px]">
+                <Users className="w-5 h-5 lg:w-6 lg:h-6 text-primary mb-2" />
+                <div className="text-xl lg:text-2xl font-bold text-foreground">6</div>
+                <div className="text-xs lg:text-sm text-muted-foreground">Mission Scenarios</div>
+              </div>
+              <div className="bg-white/5 border border-white/15 rounded-xl p-3 lg:p-4 backdrop-blur-[2px]">
+                <Gauge className="w-5 h-5 lg:w-6 lg:h-6 text-primary mb-2" />
+                <div className="text-xl lg:text-2xl font-bold text-foreground">Real-time</div>
+                <div className="text-xs lg:text-sm text-muted-foreground">Telemetry</div>
+              </div>
             </div>
           </div>
           

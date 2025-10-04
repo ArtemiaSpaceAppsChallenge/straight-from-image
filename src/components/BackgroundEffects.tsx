@@ -1,8 +1,37 @@
 const BackgroundEffects = () => {
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none">
-      {/* Ellipse 10 - Blue gradient top left */}
+      {/* Animated stars */}
+      <div className="absolute inset-0">
+        {[...Array(50)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-1 h-1 bg-white rounded-full animate-pulse"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${2 + Math.random() * 3}s`,
+              opacity: 0.1 + Math.random() * 0.3,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Grid pattern overlay */}
       <div 
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(0, 182, 218, 0.3) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 182, 218, 0.3) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px',
+        }}
+      />
+      
+      {/* Ellipse 10 - Blue gradient top left */}
+      <div
         className="absolute w-[800px] md:w-[1200px] lg:w-[1541px] h-[400px] md:w-[500px] lg:h-[669px] left-[20px] md:left-[60px] lg:left-[111px] -top-[100px] md:-top-[140px] lg:-top-[160px]"
         style={{
           background: 'radial-gradient(50% 50% at 50% 50%, rgba(16, 64, 160, 0.4) 0%, rgba(16, 64, 160, 0) 100%)',
