@@ -56,7 +56,7 @@ const Footer = () => {
           </div>
         </div>
         
-        /* {/* Partners & Compliance */}
+        {/* {/* Partners & Compliance */}
         <div className="mt-12 pt-8 border-t border-white/15">
           <h4 className="text-foreground text-lg md:text-xl font-bold text-center mb-6">
             Partners & Compliance
@@ -105,7 +105,7 @@ const Footer = () => {
           <p className="text-muted-foreground text-sm md:text-base">
             © 2025 Artemis Habitat Designer. All rights reserved.
           </p>
-        </div> */
+        </div> */}
       </div>
     </footer>
   );
