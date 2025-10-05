@@ -7,6 +7,12 @@ import { ROOM_REQUIREMENTS, HABITAT_OBJECTS } from '@/lib/gameData';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CheckCircle2 } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 
 interface BuildPanelProps {
   onAddRoom: (type: RoomType) => void;
@@ -154,24 +160,51 @@ export const BuildPanel: React.FC<BuildPanelProps> = ({
                         </h4>
                         <div className="space-y-2">
                           {objects.map(obj => (
-                            <Card
-                              key={obj.id}
-                              className="bg-white/10 border-white/20 p-2 hover:bg-white/15 transition-colors cursor-pointer"
-                              onClick={() => onAddObject(obj.id)}
-                            >
-                              <div className="flex items-center gap-2">
-                                <span className="text-xl">{obj.icon}</span>
-                                <div className="flex-1">
-                                  <div className="text-xs font-medium text-white">
-                                    {obj.name}
+                            <TooltipProvider key={obj.id}>
+                              <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                  <Card
+                                    className="bg-white/10 border-white/20 p-2 hover:bg-white/15 transition-colors cursor-pointer"
+                                    onClick={() => onAddObject(obj.id)}
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-xl">{obj.icon}</span>
+                                      <div className="flex-1">
+                                        <div className="text-xs font-medium text-white">
+                                          {obj.name}
+                                        </div>
+                                        <div className="text-xs text-white/60">
+                                          {obj.dimensions.width}×{obj.dimensions.height}
+                                          {obj.dimensions.depth && `×${obj.dimensions.depth}`}m
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </Card>
+                                </TooltipTrigger>
+                                <TooltipContent side="right" className="max-w-xs bg-slate-900 border-slate-700">
+                                  <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-2xl">{obj.icon}</span>
+                                      <div className="font-bold text-white">{obj.name}</div>
+                                    </div>
+                                    <div className="text-xs text-slate-300">
+                                      <div className="mb-1">
+                                        <span className="font-semibold">Category:</span> {obj.category}
+                                      </div>
+                                      <div className="mb-1">
+                                        <span className="font-semibold">Dimensions:</span>{' '}
+                                        {obj.dimensions.width}×{obj.dimensions.height}
+                                        {obj.dimensions.depth && `×${obj.dimensions.depth}`}m
+                                      </div>
+                                      <div className="mb-1">
+                                        <span className="font-semibold">Compatible Rooms:</span>{' '}
+                                        {obj.roomTypes.join(', ')}
+                                      </div>
+                                    </div>
                                   </div>
-                                  <div className="text-xs text-white/60">
-                                    {obj.dimensions.width}×{obj.dimensions.height}
-                                    {obj.dimensions.depth && `×${obj.dimensions.depth}`}m
-                                  </div>
-                                </div>
-                              </div>
-                            </Card>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           ))}
                         </div>
                       </div>

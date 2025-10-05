@@ -46,11 +46,13 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   const [crewTrails, setCrewTrails] = useState<Map<string, { x: number; y: number; z: number; timestamp: number }[]>>(new Map());
   const [animationFrame, setAnimationFrame] = useState(0);
   const [astronautImage, setAstronautImage] = useState<HTMLImageElement | null>(null);
+  const [hoveredObject, setHoveredObject] = useState<{ object: PlacedObject; room: Room; mousePos: { x: number; y: number } } | null>(null);
+  const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
 
   // Load astronaut image
   useEffect(() => {
     const img = new Image();
-    img.src = '/astronaut.png';
+    img.src = 'https://i.imgur.com/2GNveMF.png';
     img.onload = () => {
       setAstronautImage(img);
     };
@@ -561,6 +563,69 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     return null;
   };
 
+  // Helper function to get object at mouse position
+  const getObjectAtPosition = (mouseX: number, mouseY: number): { object: PlacedObject; room: Room } | null => {
+    const canvas = canvasRef.current;
+    if (!canvas) return null;
+
+    const rect = canvas.getBoundingClientRect();
+    const canvasX = mouseX - rect.left;
+    const canvasY = mouseY - rect.top;
+
+    // Convert screen coordinates to world coordinates
+    const centerX = canvas.width / 2 + cameraPosition.x;
+    const centerY = canvas.height / 2 + cameraPosition.y;
+    
+    const worldX = (canvasX - centerX) / cameraZoom;
+    const worldY = (canvasY - centerY) / cameraZoom;
+
+    // Apply reverse rotation
+    const cos = Math.cos((-cameraRotation * Math.PI) / 180);
+    const sin = Math.sin((-cameraRotation * Math.PI) / 180);
+    const rotatedX = worldX * cos - worldY * sin;
+    const rotatedY = worldX * sin + worldY * cos;
+
+    // Helper function for isometric projection (must match rendering)
+    const toIsometric = (x: number, y: number, z: number = 0) => {
+      const isoX = (x - y) * 0.866;
+      const isoY = (x + y) * 0.5 - z;
+      return { x: isoX * 30, y: isoY * 30 };
+    };
+
+    // Check objects in reverse order (top to bottom rendering)
+    // This ensures we select the topmost visual object
+    for (let i = rooms.length - 1; i >= 0; i--) {
+      const room = rooms[i];
+      
+      for (let j = room.objects.length - 1; j >= 0; j--) {
+        const obj = room.objects[j];
+        
+        // Get the visual position of the object (matches rendering)
+        const objIsoPos = toIsometric(obj.position.x, obj.position.y, obj.position.z || 0);
+        
+        // Define hitbox size based on object dimensions
+        // Objects are rendered as icons, so we use a reasonable clickable area
+        const hitboxRadius = Math.max(
+          obj.type.dimensions.width * 15, // Scale to isometric space
+          obj.type.dimensions.height * 15,
+          20 // Minimum clickable radius
+        );
+        
+        // Calculate distance from mouse to object center
+        const dx = rotatedX - objIsoPos.x;
+        const dy = rotatedY - objIsoPos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // Check if mouse is within the object's hitbox (circular for simplicity)
+        if (distance <= hitboxRadius) {
+          return { object: obj, room };
+        }
+      }
+    }
+
+    return null;
+  };
+
   // Mouse event handlers for camera interaction
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const clickedRoom = getRoomAtPosition(e.clientX, e.clientY);
@@ -595,9 +660,23 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    // Store mouse position for tooltip
+    setMousePosition({ x: e.clientX, y: e.clientY });
+
     // Update hovered room even when not dragging
     const hoveredRoomId = getRoomAtPosition(e.clientX, e.clientY);
     setHoveredRoom(hoveredRoomId);
+
+    // Update hovered object
+    const hoveredObj = getObjectAtPosition(e.clientX, e.clientY);
+    if (hoveredObj) {
+      setHoveredObject({
+        ...hoveredObj,
+        mousePos: { x: e.clientX, y: e.clientY }
+      });
+    } else {
+      setHoveredObject(null);
+    }
 
     if (!isDragging) return;
 
@@ -756,6 +835,62 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
             </div>
           )}
         </div>
+
+        {/* Object tooltip when hovering */}
+        {hoveredObject && (
+          <div
+            className="absolute bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-white pointer-events-none shadow-xl z-50"
+            style={{
+              left: `${hoveredObject.mousePos.x + 15}px`,
+              top: `${hoveredObject.mousePos.y + 15}px`,
+              transform: 'translateY(-50%)',
+              maxWidth: '300px'
+            }}
+          >
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 border-b border-slate-700 pb-2">
+                <span className="text-2xl">{hoveredObject.object.type.icon}</span>
+                <div>
+                  <div className="font-bold text-sm">{hoveredObject.object.type.name}</div>
+                  <div className="text-xs text-slate-400">
+                    in {hoveredObject.room.name}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-xs space-y-1">
+                <div>
+                  <span className="text-slate-400">Category:</span>{' '}
+                  <span className="text-white capitalize">{hoveredObject.object.type.category}</span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Dimensions:</span>{' '}
+                  <span className="text-white">
+                    {hoveredObject.object.type.dimensions.width}×
+                    {hoveredObject.object.type.dimensions.height}
+                    {hoveredObject.object.type.dimensions.depth && 
+                      `×${hoveredObject.object.type.dimensions.depth}`}m
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Position:</span>{' '}
+                  <span className="text-white">
+                    ({Math.round(hoveredObject.object.position.x)}, 
+                     {Math.round(hoveredObject.object.position.y)}, 
+                     {hoveredObject.object.position.z || 0})
+                  </span>
+                </div>
+                <div>
+                  <span className="text-slate-400">Compatible Rooms:</span>{' '}
+                  <span className="text-white text-xs">
+                    {hoveredObject.object.type.roomTypes.slice(0, 3).join(', ')}
+                    {hoveredObject.object.type.roomTypes.length > 3 && '...'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Card>
   );

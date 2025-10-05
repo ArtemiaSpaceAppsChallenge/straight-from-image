@@ -23,7 +23,7 @@ export const GameContainer: React.FC = () => {
   const navigate = useNavigate();
   const [showMissionSelector, setShowMissionSelector] = useState(true);
   const [recentlyAddedObject, setRecentlyAddedObject] = useState<string | null>(null);
-  const [simulationSpeed, setSimulationSpeed] = useState<1 | 2 | 3 | 4>(1);
+  const [simulationSpeed, setSimulationSpeed] = useState<1 | 2 | 3 | 4 | 8 | 12>(1);
   const [gameState, setGameState] = useState<GameState>({
     isLoading: false,
     isPlaying: false,

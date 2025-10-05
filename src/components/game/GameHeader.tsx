@@ -13,12 +13,12 @@ interface GameHeaderProps {
   score: number;
   complianceScore: number;
   crewHappiness: number;
-  simulationSpeed: 1 | 2 | 3 | 4;
+  simulationSpeed: 1 | 2 | 3 | 4 | 8 | 12;
   onPlayPause: () => void;
   onReset: () => void;
   onSettings: () => void;
   onInfo: () => void;
-  onSpeedChange: (speed: 1 | 2 | 3 | 4) => void;
+  onSpeedChange: (speed: 1 | 2 | 3 | 4 | 8 | 12) => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
@@ -36,7 +36,7 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   onSpeedChange
 }) => {
   const cycleSpeed = () => {
-    const speeds: Array<1 | 2 | 3 | 4> = [1, 2, 3, 4];
+    const speeds: Array<1 | 2 | 3 | 4 | 8 | 12> = [1, 2, 3, 4, 8, 12];
     const currentIndex = speeds.indexOf(simulationSpeed);
     const nextIndex = (currentIndex + 1) % speeds.length;
     onSpeedChange(speeds[nextIndex]);

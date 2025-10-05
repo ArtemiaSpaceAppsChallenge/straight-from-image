@@ -7,7 +7,7 @@ import { useTranslations } from "@/lib/translations";
 const Hero = () => {
   const { language } = useLanguage();
   const t = useTranslations(language);
-  const previewImage = "https://i.imgur.com/llKLfAx.png";
+  const previewImage = "https://i.imgur.com/M6BcgtA.jpeg";
 
   return (
     <section className="pt-20 md:pt-32 lg:pt-[247px] pb-12 md:pb-16 lg:pb-20 px-4 md:px-6 lg:px-12 relative z-10">
