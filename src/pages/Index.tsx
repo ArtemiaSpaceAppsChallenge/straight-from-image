@@ -7,6 +7,7 @@ import FeaturesMVP from "@/components/FeaturesMVP";
 import Technologies from "@/components/Technologies";
 import About from "@/components/About";
 import Roadmap from "@/components/Roadmap";
+import Newsletter from "@/components/Newsletter";
 import Footer from "@/components/Footer";
 import BackgroundEffects from "@/components/BackgroundEffects";
 
@@ -25,6 +26,7 @@ const Index = () => {
         <About />
         <Roadmap />
       </main>
+      <Newsletter />
       <Footer />
     </div>
   );
