@@ -1,4 +1,4 @@
-import { Shield, Play, Languages } from "lucide-react";
+import { Play, Languages } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
@@ -21,27 +21,41 @@ const Header = () => {
       <div className="w-full px-4 md:px-6 lg:px-12 xl:px-24">
         <div className="flex items-center justify-between h-16 md:h-20 lg:h-[97px]">
           <Link to="/" className="flex items-center gap-2 md:gap-3">
-            <div className="w-8 h-8 md:w-12 md:h-12 lg:w-[53px] lg:h-[53px] flex items-center justify-center">
-              <Shield className="w-full h-full text-foreground" />
+            <div className="w-8 h-8 md:w-12 md:h-12 lg:w-[53px] lg:h-[53px] flex items-center justify-center">  
+              <img
+                src="https://i.imgur.com/RMNA5bO.png"
+                alt="Logo Artemis"
+                className="w-full h-full object-contain"
+              />
             </div>
-            <span className="text-lg md:text-xl lg:text-2xl font-black text-foreground">Artemis</span>
+            <span className="text-lg md:text-xl lg:text-2xl font-black text-foreground">
+              Artemis
+            </span>
           </Link>
-          
+
           <nav className="flex items-center gap-3 md:gap-6 lg:gap-8">
-            <button 
+            <button
               onClick={navigateHome}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors cursor-pointer"
             >
               {t.home}
             </button>
-            <a href="#about" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
+            <a
+              href="#about"
+              className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
+            >
               {t.about}
             </a>
-            <a href="#roadmap" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
+            <a
+              href="#roadmap"
+              className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
+            >
               {t.roadmap}
             </a>
-            
-            {/* <DropdownMenu>
+
+            {/* Dropdown de idioma opcional (comentado) */}
+            {/* 
+            <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button 
                   variant="ghost" 
@@ -63,7 +77,8 @@ const Header = () => {
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
-            </DropdownMenu> */}
+            </DropdownMenu> 
+            */}
 
             <Link to="/play">
               <Button className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90 rounded-full text-xs md:text-sm lg:text-base font-bold">

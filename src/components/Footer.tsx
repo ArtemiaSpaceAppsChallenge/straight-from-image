@@ -12,7 +12,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 items-start">
           <div className="flex items-center justify-center md:justify-start">
             <div className="w-32 h-32 md:w-40 md:h-40 lg:w-[239px] lg:h-[239px] flex items-center justify-center">
-              <Shield className="w-24 h-24 md:w-32 md:h-32 text-foreground" />
+              <img
+                src="https://i.imgur.com/RMNA5bO.png" // ← coloque aqui a URL da logo
+                alt="Logo Artemis"
+                className="w-full h-full object-contain"
+              />
             </div>
           </div>
           
