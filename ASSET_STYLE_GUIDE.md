@@ -11,7 +11,7 @@ All game assets follow a consistent **isometric pixel art style** to maintain vi
 ### Camera Angle
 - **Projection**: Dimetric (2:1 ratio)
 - **Viewing Angle**: 30° from horizontal
-- **Rotation**: 45° around vertical axis
+- **Rotation**: 0° around vertical axis (default, user can rotate)
 - **Scale**: 30 pixels per meter
 
 ### Grid System

@@ -7,14 +7,20 @@ import { ResourcesPanel } from './ResourcesPanel';
 import { BuildPanel } from './BuildPanel';
 import { ValidationPanel } from './ValidationPanel';
 import { MissionSelector } from './MissionSelector';
+import { CameraControls } from './CameraControls';
 import { validateHabitat, calculateComplianceScore, calculateCrewHappiness, calculateResourceConsumption, updateCrewNeeds, generateCrewMember } from '@/lib/gameLogic';
 import { CREW_NAMES, ROOM_REQUIREMENTS, HABITAT_OBJECTS } from '@/lib/gameData';
+import { findValidRoomPosition, wouldRoomOverlap, autoArrangeRooms } from '@/lib/roomCollision';
 import { useToast } from '@/hooks/use-toast';
 import { useAudio } from '@/contexts/AudioContext';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export const GameContainer: React.FC = () => {
   const { toast } = useToast();
   const { togglePlay, isPlaying } = useAudio();
+  const navigate = useNavigate();
   const [showMissionSelector, setShowMissionSelector] = useState(true);
   const [recentlyAddedObject, setRecentlyAddedObject] = useState<string | null>(null);
   const [gameState, setGameState] = useState<GameState>({
@@ -41,7 +47,7 @@ export const GameContainer: React.FC = () => {
     selectedObject: null,
     camera: {
       zoom: 1,
-      rotation: 45,
+      rotation: 0,
       position: { x: 0, y: 0, z: 0 }
     }
   });
@@ -160,6 +166,46 @@ export const GameContainer: React.FC = () => {
     return () => clearInterval(interval);
   }, [gameState.isPlaying, gameState.isPaused, gameState.habitat]);
 
+  // Keyboard controls for camera
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only handle keys when game is active (not mission selector)
+      if (showMissionSelector) return;
+
+      switch (e.key.toLowerCase()) {
+        case '+':
+        case '=':
+          e.preventDefault();
+          handleZoomIn();
+          break;
+        case '-':
+          e.preventDefault();
+          handleZoomOut();
+          break;
+        case 'r':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleResetCamera();
+          } else {
+            e.preventDefault();
+            handleResetRotation();
+          }
+          break;
+        case 'arrowleft':
+          e.preventDefault();
+          handleCameraChange({ rotation: gameState.camera.rotation - 15 });
+          break;
+        case 'arrowright':
+          e.preventDefault();
+          handleCameraChange({ rotation: gameState.camera.rotation + 15 });
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [gameState.camera.rotation, showMissionSelector]);
+
   const handlePlayPause = () => {
     setGameState(prev => ({
       ...prev,
@@ -177,26 +223,91 @@ export const GameContainer: React.FC = () => {
     setShowMissionSelector(true);
   };
 
+  const handleCameraChange = (cameraUpdate: { 
+    zoom?: number; 
+    rotation?: number; 
+    position?: { x: number; y: number; z?: number } 
+  }) => {
+    setGameState(prev => ({
+      ...prev,
+      camera: {
+        ...prev.camera,
+        ...cameraUpdate
+      }
+    }));
+  };
+
+  const handleZoomIn = () => {
+    const newZoom = Math.min(3, gameState.camera.zoom + 0.2);
+    handleCameraChange({ zoom: newZoom });
+  };
+
+  const handleZoomOut = () => {
+    const newZoom = Math.max(0.1, gameState.camera.zoom - 0.2);
+    handleCameraChange({ zoom: newZoom });
+  };
+
+  const handleResetCamera = () => {
+    handleCameraChange({
+      zoom: 1,
+      rotation: 0,
+      position: { x: 0, y: 0, z: 0 }
+    });
+  };
+
+  const handleResetRotation = () => {
+    handleCameraChange({ rotation: 0 });
+  };
+
+  const handleReturnHome = () => {
+    if (gameState.habitat && gameState.habitat.rooms.length > 0) {
+      const confirmed = window.confirm(
+        'Are you sure you want to return to home? Your current habitat design will be lost.'
+      );
+      if (confirmed) {
+        navigate('/');
+      }
+    } else {
+      navigate('/');
+    }
+  };
+
   const handleAddRoom = (type: RoomType) => {
     if (!gameState.habitat) return;
 
     const roomCount = gameState.habitat.rooms.filter(r => r.type === type).length;
     const requirements = ROOM_REQUIREMENTS[type];
     
+    // Calculate room dimensions
+    const dimensions = {
+      width: Math.ceil(requirements.minArea * gameState.habitat.crewSize / 3),
+      height: 3,
+      depth: 3
+    };
+
+    // Find a valid position that doesn't overlap with existing rooms
+    const validPosition = findValidRoomPosition(
+      dimensions,
+      gameState.habitat.rooms,
+      100, // max attempts
+      1    // grid size
+    );
+
+    if (!validPosition) {
+      toast({
+        title: "Cannot Place Room",
+        description: `No space available for ${type} room. Try removing or relocating other rooms first.`,
+        variant: "destructive",
+      });
+      return;
+    }
+
     const newRoom: Room = {
       id: `room-${Date.now()}`,
       type,
       name: `${type.charAt(0).toUpperCase() + type.slice(1)} ${roomCount + 1}`,
-      position: {
-        x: Math.floor(Math.random() * 10),
-        y: Math.floor(Math.random() * 10),
-        z: 0
-      },
-      dimensions: {
-        width: Math.ceil(requirements.minArea * gameState.habitat.crewSize / 3),
-        height: 3,
-        depth: 3
-      },
+      position: validPosition,
+      dimensions,
       isValid: true,
       requiredArea: requirements.minArea * gameState.habitat.crewSize,
       actualArea: requirements.minArea * gameState.habitat.crewSize,
@@ -208,6 +319,11 @@ export const GameContainer: React.FC = () => {
 
     const newVolume = newRoom.dimensions.width * newRoom.dimensions.height * (newRoom.dimensions.depth || 3);
 
+    toast({
+      title: "Room Added",
+      description: `${newRoom.name} placed at position (${validPosition.x}, ${validPosition.y}, ${validPosition.z})`,
+    });
+
     setGameState(prev => ({
       ...prev,
       habitat: prev.habitat ? {
@@ -218,6 +334,31 @@ export const GameContainer: React.FC = () => {
       } : null,
       selectedRoom: newRoom.id
     }));
+  };
+
+  const handleAutoArrangeRooms = () => {
+    if (!gameState.habitat) return;
+
+    const arrangedRooms = autoArrangeRooms(gameState.habitat.rooms);
+    const overlapsFixed = arrangedRooms.filter(room => room.isValid).length;
+    const overlapsRemaining = arrangedRooms.filter(room => !room.isValid).length;
+
+    setGameState(prev => ({
+      ...prev,
+      habitat: prev.habitat ? {
+        ...prev.habitat,
+        rooms: arrangedRooms,
+        lastModified: new Date()
+      } : null
+    }));
+
+    toast({
+      title: "Rooms Auto-Arranged",
+      description: overlapsRemaining > 0 
+        ? `Fixed ${overlapsFixed} rooms, ${overlapsRemaining} rooms still need manual placement.`
+        : `All ${overlapsFixed} rooms arranged successfully!`,
+      variant: overlapsRemaining > 0 ? "destructive" : "default",
+    });
   };
 
   const handleAddObject = (objectId: string) => {
@@ -301,6 +442,51 @@ export const GameContainer: React.FC = () => {
     }));
   };
 
+  const handleRoomMove = (roomId: string, newPosition: { x: number; y: number; z?: number }) => {
+    if (!gameState.habitat) return;
+
+    const room = gameState.habitat.rooms.find(r => r.id === roomId);
+    if (!room) return;
+
+    // Check if the new position would cause overlaps
+    const otherRooms = gameState.habitat.rooms.filter(r => r.id !== roomId);
+    if (wouldRoomOverlap(newPosition, room.dimensions, otherRooms)) {
+      toast({
+        title: "Cannot Move Room",
+        description: "Room would overlap with another room at this position.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Ensure the room stays within bounds
+    const maxX = 20 - room.dimensions.width;
+    const maxY = 20 - (room.dimensions.depth || room.dimensions.width);
+    const clampedPosition = {
+      x: Math.max(0, Math.min(maxX, newPosition.x)),
+      y: Math.max(0, Math.min(maxY, newPosition.y)),
+      z: Math.max(0, newPosition.z || 0)
+    };
+
+    setGameState(prev => ({
+      ...prev,
+      habitat: prev.habitat ? {
+        ...prev.habitat,
+        rooms: prev.habitat.rooms.map(r => 
+          r.id === roomId 
+            ? { ...r, position: clampedPosition }
+            : r
+        ),
+        lastModified: new Date()
+      } : null
+    }));
+
+    toast({
+      title: "Room Moved",
+      description: `${room.name} moved to position (${clampedPosition.x}, ${clampedPosition.y}, ${clampedPosition.z})`,
+    });
+  };
+
   if (showMissionSelector) {
     return (
       <MissionSelector
@@ -327,6 +513,18 @@ export const GameContainer: React.FC = () => {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent pointer-events-none" />
       
       <div className="relative z-10 p-4 space-y-4">
+        {/* Return to Home Button */}
+        <div className="flex justify-start">
+          <Button
+            onClick={handleReturnHome}
+            variant="ghost"
+            className="text-white hover:text-cyan-400 hover:bg-white/10"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Return to Home
+          </Button>
+        </div>
+
         {/* Header */}
         <GameHeader
           isPlaying={gameState.isPlaying}
@@ -348,6 +546,7 @@ export const GameContainer: React.FC = () => {
             <BuildPanel
               onAddRoom={handleAddRoom}
               onAddObject={handleAddObject}
+              onAutoArrange={handleAutoArrangeRooms}
               selectedRoom={gameState.selectedRoom}
               rooms={gameState.habitat.rooms}
             />
@@ -360,9 +559,21 @@ export const GameContainer: React.FC = () => {
               crew={gameState.crew}
               selectedRoom={gameState.selectedRoom}
               onRoomSelect={handleRoomSelect}
+              onRoomMove={handleRoomMove}
               cameraZoom={gameState.camera.zoom}
               cameraRotation={gameState.camera.rotation}
+              cameraPosition={gameState.camera.position}
+              onCameraChange={handleCameraChange}
               recentlyAddedObject={recentlyAddedObject}
+            />
+            
+            <CameraControls
+              zoom={gameState.camera.zoom}
+              rotation={gameState.camera.rotation}
+              onZoomIn={handleZoomIn}
+              onZoomOut={handleZoomOut}
+              onResetCamera={handleResetCamera}
+              onResetRotation={handleResetRotation}
             />
             
             <ValidationPanel

@@ -11,6 +11,7 @@ import { CheckCircle2 } from 'lucide-react';
 interface BuildPanelProps {
   onAddRoom: (type: RoomType) => void;
   onAddObject: (objectId: string) => void;
+  onAutoArrange?: () => void;
   selectedRoom: string | null;
   rooms?: Room[];
 }
@@ -18,6 +19,7 @@ interface BuildPanelProps {
 export const BuildPanel: React.FC<BuildPanelProps> = ({
   onAddRoom,
   onAddObject,
+  onAutoArrange,
   selectedRoom,
   rooms = []
 }) => {
@@ -56,6 +58,16 @@ export const BuildPanel: React.FC<BuildPanelProps> = ({
         </TabsList>
 
         <TabsContent value="rooms">
+          {onAutoArrange && rooms.length > 0 && (
+            <Button
+              onClick={onAutoArrange}
+              variant="outline"
+              className="w-full mb-4 bg-purple-600/20 hover:bg-purple-600/30 border-purple-400"
+            >
+              🔧 Auto-Arrange Rooms (Fix Overlaps)
+            </Button>
+          )}
+          
           <ScrollArea className="h-[500px] pr-4">
             <div className="space-y-2">
               {roomTypes.map(type => {
