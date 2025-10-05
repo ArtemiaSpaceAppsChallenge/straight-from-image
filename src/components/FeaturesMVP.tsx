@@ -1,5 +1,7 @@
 import { Building2, Shield, Activity, UtensilsCrossed, Gauge } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const features = [
   {
@@ -30,16 +32,19 @@ const features = [
 ];
 
 const FeaturesMVP = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
         <div className="bg-white/5 border border-white/15 rounded-2xl lg:rounded-[21px] backdrop-blur-[2px] p-6 md:p-8">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl md:text-2xl font-bold text-foreground leading-tight lg:leading-[29px]">
-              Core Features
+              {t.coreFeatures}
             </h2>
             <Badge variant="outline" className="border-primary/50 text-primary">
-              NASA Compliant
+              {t.nasaCompliant}
             </Badge>
           </div>
           

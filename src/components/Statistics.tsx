@@ -1,4 +1,6 @@
 import { Gauge, Shield, Clock, Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const stats = [
   {
@@ -28,12 +30,15 @@ const stats = [
 ];
 
 const Statistics = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3">
-            By The Numbers
+            {t.byTheNumbers}
           </h2>
           <p className="text-muted-foreground text-sm md:text-base lg:text-lg max-w-2xl mx-auto">
             Performance metrics that matter for mission-critical space habitat design

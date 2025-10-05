@@ -1,6 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CheckCircle2, Rocket, Sparkles, Layers, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const milestones = [
   {
@@ -54,12 +56,15 @@ const milestones = [
 ];
 
 const Roadmap = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section id="roadmap" className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Development Roadmap
+            {t.developmentRoadmap}
           </h2>
           <p className="text-foreground text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
             Our strategic plan to deliver a comprehensive habitat design platform, scaling from initial prototype to enterprise-grade simulation infrastructure.

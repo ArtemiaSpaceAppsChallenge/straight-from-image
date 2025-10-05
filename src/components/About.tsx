@@ -1,5 +1,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const teamMembers = [
   {
@@ -41,12 +43,15 @@ const teamMembers = [
 ];
 
 const About = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section id="about" className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Our Team
+            {t.ourTeam}
           </h2>
           <p className="text-foreground text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
             A multidisciplinary team of aerospace engineers, system architects, and human factors specialists dedicated to advancing space habitat technology.

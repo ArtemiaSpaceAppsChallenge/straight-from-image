@@ -1,6 +1,11 @@
 import { AlertCircle, Clock, Users } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const Challenge = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
@@ -10,7 +15,7 @@ const Challenge = () => {
               <AlertCircle className="w-5 h-5 lg:w-6 lg:h-6 text-white" />
             </div>
             <h3 className="text-2xl md:text-3xl lg:text-[32px] font-bold text-foreground leading-tight lg:leading-[39px]">
-              The Challenge
+              {t.theChallenge}
             </h3>
           </div>
           

@@ -1,9 +1,11 @@
-import { Shield, Github, Video, Mail, Rocket } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { Shield, Github, Video } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const Footer = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <footer className="py-12 md:py-16 px-4 md:px-6 lg:px-12 border-t border-white/15 backdrop-blur-[2px] relative z-10 mt-auto">
       <div className="w-full max-w-7xl mx-auto">
@@ -16,7 +18,7 @@ const Footer = () => {
           
           <div className="space-y-6 md:space-y-8 lg:space-y-[67px] text-center md:text-left">
             <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
-              Resources
+              {t.resources}
             </h4>
             <a href="#" className="flex items-center justify-center md:justify-start gap-2 text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
               <Video className="w-5 h-5" />
@@ -30,22 +32,22 @@ const Footer = () => {
           
           <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
             <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
-              Navigation
+              {t.navigation}
             </h4>
             <a href="#about" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              About
+              {t.about}
             </a>
             <a href="#roadmap" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Roadmap
+              {t.roadmap}
             </a>
             <a href="/play" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
-              Play
+              {t.play}
             </a>
           </div>
           
           <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
             <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
-              Legal
+              {t.legal}
             </h4>
             <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
               Privacy Policy

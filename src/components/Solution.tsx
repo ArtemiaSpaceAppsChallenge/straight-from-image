@@ -1,7 +1,12 @@
 import { Lightbulb, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { useTranslations } from "@/lib/translations";
 
 const Solution = () => {
+  const { language } = useLanguage();
+  const t = useTranslations(language);
+  
   return (
     <section className="py-8 md:py-12 lg:py-16 px-4 md:px-6 lg:px-12 relative z-10">
       <div className="w-full max-w-7xl mx-auto">
@@ -12,11 +17,11 @@ const Solution = () => {
             </div>
             <div className="flex-1">
               <h3 className="text-2xl md:text-3xl lg:text-[32px] font-bold text-foreground leading-tight lg:leading-[39px]">
-                Our Solution
+                {t.ourSolution}
               </h3>
               <Badge variant="outline" className="mt-2 border-primary/50 text-primary">
                 <Zap className="w-3 h-3 mr-1" />
-                NASA-STD-3001 Compliant
+                {t.nasaCompliant}
               </Badge>
             </div>
           </div>
