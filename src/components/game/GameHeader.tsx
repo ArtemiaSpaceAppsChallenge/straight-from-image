@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Play, Pause, RotateCcw, Settings, Info } from 'lucide-react';
+import { AudioControls } from './AudioControls';
 
 interface GameHeaderProps {
   isPlaying: boolean;
@@ -86,8 +87,9 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           </div>
         </div>
 
-        {/* Right: Status Badge */}
-        <div>
+        {/* Right: Audio Controls & Status */}
+        <div className="flex items-center gap-3">
+          <AudioControls />
           <Badge variant={isPlaying && !isPaused ? "default" : "secondary"}>
             {isPlaying && !isPaused ? "Running" : "Paused"}
           </Badge>

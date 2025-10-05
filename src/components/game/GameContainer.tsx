@@ -10,9 +10,11 @@ import { MissionSelector } from './MissionSelector';
 import { validateHabitat, calculateComplianceScore, calculateCrewHappiness, calculateResourceConsumption, updateCrewNeeds, generateCrewMember } from '@/lib/gameLogic';
 import { CREW_NAMES, ROOM_REQUIREMENTS, HABITAT_OBJECTS } from '@/lib/gameData';
 import { useToast } from '@/hooks/use-toast';
+import { useAudio } from '@/contexts/AudioContext';
 
 export const GameContainer: React.FC = () => {
   const { toast } = useToast();
+  const { togglePlay, isPlaying } = useAudio();
   const [showMissionSelector, setShowMissionSelector] = useState(true);
   const [recentlyAddedObject, setRecentlyAddedObject] = useState<string | null>(null);
   const [gameState, setGameState] = useState<GameState>({
@@ -91,6 +93,11 @@ export const GameContainer: React.FC = () => {
     }));
 
     setShowMissionSelector(false);
+    
+    // Start background music when game begins
+    if (!isPlaying) {
+      togglePlay();
+    }
   };
 
   // Game loop
@@ -159,6 +166,11 @@ export const GameContainer: React.FC = () => {
       isPlaying: true,
       isPaused: !prev.isPaused
     }));
+    
+    // Sync audio playback with game state
+    if (!isPlaying || gameState.isPaused) {
+      togglePlay();
+    }
   };
 
   const handleReset = () => {
