@@ -205,10 +205,10 @@ const baseTranslations = {
   }
 };
 
-// Create fallback for other languages - they'll use English as fallback
-export const translations: Record<Language, typeof baseTranslations.en> = {
+// All languages use English as fallback for now
+export const translations = {
   en: baseTranslations.en,
-  pt: baseTranslations.en, // Temporarily use English
+  pt: baseTranslations.en,
   es: baseTranslations.en,
   it: baseTranslations.en,
   ja: baseTranslations.en,
@@ -216,7 +216,7 @@ export const translations: Record<Language, typeof baseTranslations.en> = {
   cs: baseTranslations.en,
   el: baseTranslations.en,
   la: baseTranslations.en,
-};
+} as const satisfies Record<Language, typeof baseTranslations.en>;
 
 export const useTranslations = (language: Language) => {
   return translations[language] || translations.en;
