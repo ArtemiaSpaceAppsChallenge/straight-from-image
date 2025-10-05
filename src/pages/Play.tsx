@@ -2,8 +2,16 @@ import Header from "@/components/Header";
 import { ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { GameContainer } from "@/components/game/GameContainer";
+import { useState } from "react";
 
 const Play = () => {
+  const [showGame, setShowGame] = useState(false);
+
+  if (showGame) {
+    return <GameContainer />;
+  }
+
   return (
     <div className="min-h-screen bg-[#0B0F17] relative overflow-hidden">
       <Header />
@@ -22,32 +30,39 @@ const Play = () => {
               Habitat Layout Designer
             </h1>
             
-            <div className="relative w-full bg-muted/20 rounded-lg overflow-hidden" style={{ paddingBottom: '56.25%' }}>
-              <iframe
-                className="absolute top-0 left-0 w-full h-full border-0"
-                src="about:blank"
-                title="Artemia Habitat Designer Game"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-              <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                <div className="text-center space-y-2">
-                  <p className="text-lg md:text-xl">Game Interface Loading...</p>
-                  <p className="text-sm md:text-base">Replace iframe src with your game URL</p>
-                </div>
+            <div className="text-center py-12">
+              <div className="mb-8">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+                  🚀 Your Home in Space
+                </h2>
+                <p className="text-foreground/70 mb-6 max-w-2xl mx-auto">
+                  Design and manage space habitats for lunar, Mars, and orbital missions. 
+                  Create functional layouts, manage crew needs, and ensure compliance with NASA standards.
+                </p>
               </div>
+
+              <Button 
+                onClick={() => setShowGame(true)}
+                size="lg"
+                className="bg-primary hover:bg-primary/90 text-lg px-8 py-6"
+              >
+                Start Designing
+              </Button>
             </div>
             
-            <div className="mt-6 space-y-4">
+            <div className="mt-8 space-y-4">
               <h2 className="text-xl md:text-2xl font-bold text-foreground">
-                Quick Start Guide
+                Features
               </h2>
               <ul className="space-y-2 text-foreground text-sm md:text-base">
-                <li>• Select habitat type and crew size</li>
-                <li>• Design your layout using the drag-and-drop interface</li>
-                <li>• Validate zoning compliance with NASA ECLSS standards</li>
-                <li>• Review resource consumption metrics</li>
-                <li>• Export or save your design</li>
+                <li>• 🎮 Gamified experience inspired by Plague Inc and The Sims</li>
+                <li>• 🏗️ Design habitats with isometric 3D view</li>
+                <li>• 👨‍🚀 Manage crew members with individual needs and skills</li>
+                <li>• 📊 Track resources (oxygen, water, power, food) in real-time</li>
+                <li>• ✓ Validate designs against NASA ECLSS standards</li>
+                <li>• 🌙 Multiple mission scenarios (Lunar, Mars, Orbital)</li>
+                <li>• 🛠️ Place furniture, equipment, and decorations</li>
+                <li>• 📈 Monitor crew happiness and habitat compliance scores</li>
               </ul>
             </div>
           </div>
