@@ -6,13 +6,27 @@ export const useSmartNavigation = () => {
 
   const navigateHome = () => {
     if (location.pathname === "/") {
-      // Already on home page, just scroll to top smoothly
       window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
-      // Navigate to home page
       navigate("/");
     }
   };
 
-  return { navigateHome };
+  const navigateToSection = (sectionId: string) => {
+    const scrollToElement = () => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    if (location.pathname === "/") {
+      scrollToElement();
+    } else {
+      navigate("/");
+      setTimeout(scrollToElement, 100);
+    }
+  };
+
+  return { navigateHome, navigateToSection };
 };
