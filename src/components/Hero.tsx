@@ -32,10 +32,10 @@ const Hero = () => {
           {/* Left Content */}
           <div className="space-y-6 md:space-y-8">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm animate-fade-in">
+            {/* <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm animate-fade-in">
               <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
               <span className="text-sm font-bold text-cyan-400 uppercase tracking-wider">NASA ECLSS Standard</span>
-            </div>
+            </div> */}
 
             {/* Title */}
             <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase leading-none animate-fade-in [animation-delay:100ms] opacity-0 [animation-fill-mode:forwards]">
@@ -62,7 +62,7 @@ const Hero = () => {
               <div className="flex items-center gap-2">
                 <div className="w-1 h-8 bg-gradient-to-b from-purple-400 to-transparent rounded-full" />
                 <div>
-                  <div className="text-2xl font-bold text-foreground">6</div>
+                  <div className="text-2xl font-bold text-foreground">4</div>
                   <div className="text-xs text-gray-500 uppercase">Missions</div>
                 </div>
               </div>
