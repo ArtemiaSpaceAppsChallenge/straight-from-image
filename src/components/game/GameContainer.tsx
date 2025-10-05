@@ -23,6 +23,7 @@ export const GameContainer: React.FC = () => {
   const navigate = useNavigate();
   const [showMissionSelector, setShowMissionSelector] = useState(true);
   const [recentlyAddedObject, setRecentlyAddedObject] = useState<string | null>(null);
+  const [simulationSpeed, setSimulationSpeed] = useState<1 | 2 | 3 | 4>(1);
   const [gameState, setGameState] = useState<GameState>({
     isLoading: false,
     isPlaying: false,
@@ -112,11 +113,12 @@ export const GameContainer: React.FC = () => {
 
     const interval = setInterval(() => {
       setGameState(prev => {
-        const newDaysPassed = prev.daysPassed + 0.1; // 0.1 day per tick
+        const timeMultiplier = simulationSpeed * 0.1; // 0.1, 0.2, 0.3, or 0.4 day per tick
+        const newDaysPassed = prev.daysPassed + timeMultiplier;
         const consumptionRate = calculateResourceConsumption(
           prev.crew,
           prev.habitat!,
-          0.1
+          timeMultiplier
         );
 
         // Update resources
@@ -128,7 +130,7 @@ export const GameContainer: React.FC = () => {
         };
 
         // Update crew needs
-        const newCrew = updateCrewNeeds(prev.crew, 0.1);
+        const newCrew = updateCrewNeeds(prev.crew, timeMultiplier);
 
         // Calculate scores
         const newHabitat = { ...prev.habitat! };
@@ -164,7 +166,57 @@ export const GameContainer: React.FC = () => {
     }, 1000); // Update every second
 
     return () => clearInterval(interval);
-  }, [gameState.isPlaying, gameState.isPaused, gameState.habitat]);
+  }, [gameState.isPlaying, gameState.isPaused, gameState.habitat, simulationSpeed]);
+
+  // Crew movement effect
+  useEffect(() => {
+    if (!gameState.isPlaying || gameState.isPaused || !gameState.habitat) return;
+
+    // Adjust movement interval based on speed: base 2000ms / speed
+    const moveInterval = 2000 / simulationSpeed;
+
+    const moveCrewInterval = setInterval(() => {
+      setGameState(prev => {
+        if (!prev.habitat || prev.crew.length === 0) return prev;
+
+        const newCrew = prev.crew.map(member => {
+          // Random chance to move (30% each interval, increases with speed)
+          const moveChance = 0.3 * simulationSpeed;
+          if (Math.random() > moveChance) return member;
+
+          // Generate random movement within grid bounds (0-20)
+          const moveDistance = (0.5 + Math.random() * 1) * simulationSpeed; // Faster movement at higher speeds
+          const angle = Math.random() * Math.PI * 2; // Random direction
+          
+          let newX = member.position.x + Math.cos(angle) * moveDistance;
+          let newY = member.position.y + Math.sin(angle) * moveDistance;
+          
+          // Keep within grid bounds (0-20)
+          newX = Math.max(0, Math.min(20, newX));
+          newY = Math.max(0, Math.min(20, newY));
+          
+          // Random z level between 0 and 2
+          const newZ = Math.random() > 0.8 ? Math.floor(Math.random() * 3) : (member.position.z || 0);
+
+          return {
+            ...member,
+            position: {
+              x: newX,
+              y: newY,
+              z: newZ
+            }
+          };
+        });
+
+        return {
+          ...prev,
+          crew: newCrew
+        };
+      });
+    }, moveInterval);
+
+    return () => clearInterval(moveCrewInterval);
+  }, [gameState.isPlaying, gameState.isPaused, gameState.habitat, simulationSpeed]);
 
   // Keyboard controls for camera
   useEffect(() => {
@@ -284,6 +336,19 @@ export const GameContainer: React.FC = () => {
       height: 3,
       depth: 3
     };
+
+    // Validate room fits within grid bounds
+    const GRID_WIDTH = 20;
+    const GRID_DEPTH = 20;
+    
+    if (dimensions.width > GRID_WIDTH || (dimensions.depth || 3) > GRID_DEPTH) {
+      toast({
+        title: "Room Too Large",
+        description: `${type} room (${dimensions.width}×${dimensions.depth || 3}) exceeds grid capacity (${GRID_WIDTH}×${GRID_DEPTH}). Consider reducing crew size.`,
+        variant: "destructive",
+      });
+      return;
+    }
 
     // Find a valid position that doesn't overlap with existing rooms
     const validPosition = findValidRoomPosition(
@@ -533,10 +598,12 @@ export const GameContainer: React.FC = () => {
           score={gameState.score}
           complianceScore={complianceScore}
           crewHappiness={crewHappiness}
+          simulationSpeed={simulationSpeed}
           onPlayPause={handlePlayPause}
           onReset={handleReset}
           onSettings={() => {}}
           onInfo={() => {}}
+          onSpeedChange={setSimulationSpeed}
         />
 
         {/* Main content grid */}

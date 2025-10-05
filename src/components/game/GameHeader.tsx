@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Play, Pause, RotateCcw, Settings, Info } from 'lucide-react';
+import { Play, Pause, RotateCcw, Settings, Info, Zap } from 'lucide-react';
 import { AudioControls } from './AudioControls';
 
 interface GameHeaderProps {
@@ -13,10 +13,12 @@ interface GameHeaderProps {
   score: number;
   complianceScore: number;
   crewHappiness: number;
+  simulationSpeed: 1 | 2 | 3 | 4;
   onPlayPause: () => void;
   onReset: () => void;
   onSettings: () => void;
   onInfo: () => void;
+  onSpeedChange: (speed: 1 | 2 | 3 | 4) => void;
 }
 
 export const GameHeader: React.FC<GameHeaderProps> = ({
@@ -26,11 +28,20 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
   score,
   complianceScore,
   crewHappiness,
+  simulationSpeed,
   onPlayPause,
   onReset,
   onSettings,
-  onInfo
+  onInfo,
+  onSpeedChange
 }) => {
+  const cycleSpeed = () => {
+    const speeds: Array<1 | 2 | 3 | 4> = [1, 2, 3, 4];
+    const currentIndex = speeds.indexOf(simulationSpeed);
+    const nextIndex = (currentIndex + 1) % speeds.length;
+    onSpeedChange(speeds[nextIndex]);
+  };
+
   return (
     <Card className="bg-white/10 border-white/20 backdrop-blur-sm p-4">
       <div className="flex flex-wrap items-center justify-between gap-4">
@@ -43,6 +54,19 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
             className="bg-primary hover:bg-primary/90"
           >
             {isPaused || !isPlaying ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </Button>
+          <Button 
+            onClick={cycleSpeed} 
+            variant="outline" 
+            size="sm"
+            className="min-w-[70px] relative"
+            title="Simulation Speed"
+          >
+            <Zap className="w-4 h-4 mr-1" />
+            <span className="font-bold">{simulationSpeed}x</span>
+            {simulationSpeed > 1 && (
+              <span className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            )}
           </Button>
           <Button onClick={onReset} variant="outline" size="sm">
             <RotateCcw className="w-4 h-4" />

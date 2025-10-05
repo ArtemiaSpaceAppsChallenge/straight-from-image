@@ -70,6 +70,12 @@ export function findValidRoomPosition(
   const maxY = 20;
   const maxZ = 3;
 
+  // Early return if room is too large for the grid
+  if (dimensions.width > maxX || (dimensions.depth || dimensions.width) > maxY) {
+    console.warn(`Room dimensions (${dimensions.width}×${dimensions.depth || dimensions.width}) exceed grid bounds (${maxX}×${maxY})`);
+    return null;
+  }
+
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     // Try grid-aligned positions first, then random positions
     let x: number, y: number, z: number;
