@@ -8,37 +8,37 @@ const teamMembers = [
     name: "Roberto Braga",
     role: "Software Engineer",
     description: "Descrição padrão",
-    image: "https://i.imgur.com/5GbgwQ1.jpeg", // ← coloque a URL da imagem aqui
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
   {
     name: "Marcus Johnson",
     role: "Habitat Architect",
     description: "Specialized in extreme environment habitation design",
-    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
   {
     name: "Dr. Priya Patel",
     role: "ECLSS Specialist",
     description: "Expert in Environmental Control and Life Support Systems",
-    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
   {
     name: "Alex Rodriguez",
     role: "Simulation Engineer",
     description: "Develops predictive modeling for resource consumption",
-    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
   {
     name: "Dr. Yuki Tanaka",
     role: "Human Factors Researcher",
     description: "Studies crew psychology and workflow optimization",
-    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
   {
     name: "Emma Williams",
     role: "Systems Integration Lead",
     description: "Coordinates multi-disciplinary engineering teams",
-    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg",
   },
 ];
 

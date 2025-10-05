@@ -1,5 +1,5 @@
 import { Play, Languages } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -12,16 +12,33 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
+  const navigate = useNavigate();
   const { navigateHome } = useSmartNavigation();
   const { language, setLanguage } = useLanguage();
   const t = useTranslations(language);
+  const handleScrollTo = (id: string) => {
+    if (window.location.pathname !== "/") {
+      navigate("/");
+      setTimeout(() => {
+        const element = document.getElementById(id);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 300);
+    } else {
+      const element = document.getElementById(id);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-[5.2px]">
       <div className="w-full px-4 md:px-6 lg:px-12 xl:px-24">
         <div className="flex items-center justify-between h-16 md:h-20 lg:h-[97px]">
-          <Link to="/" className="flex items-center gap-2 md:gap-3">
-            <div className="w-8 h-8 md:w-12 md:h-12 lg:w-[53px] lg:h-[53px] flex items-center justify-center">  
+          <Link to="/" onClick={navigateHome} className="flex items-center gap-2 md:gap-3">
+            <div className="w-8 h-8 md:w-12 md:h-12 lg:w-[53px] lg:h-[53px] flex items-center justify-center">
               <img
                 src="https://i.imgur.com/RMNA5bO.png"
                 alt="Logo Artemia"
@@ -40,45 +57,18 @@ const Header = () => {
             >
               {t.home}
             </button>
-            <a
-              href="#about"
+            <button
+              onClick={() => handleScrollTo("about")}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
             >
               {t.about}
-            </a>
-            <a
-              href="#roadmap"
+            </button>
+            <button
+              onClick={() => handleScrollTo("roadmap")}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
             >
               {t.roadmap}
-            </a>
-
-            {/* Dropdown de idioma opcional (comentado) */}
-            {/* 
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="icon"
-                  className="h-8 w-8 md:h-10 md:w-10 text-foreground hover:text-primary"
-                >
-                  <Languages className="h-4 w-4 md:h-5 md:w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-md border-white/15">
-                {Object.entries(languages).map(([code, { name, flag }]) => (
-                  <DropdownMenuItem
-                    key={code}
-                    onClick={() => setLanguage(code as any)}
-                    className="cursor-pointer"
-                  >
-                    <span className="mr-2">{flag}</span>
-                    {name}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu> 
-            */}
+            </button>
 
             <Link to="/play">
               <Button className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90 rounded-full text-xs md:text-sm lg:text-base font-bold">

@@ -5,29 +5,30 @@ import { useTranslations } from "@/lib/translations";
 const stats = [
   {
     icon: Gauge,
-    value: "99.7%",
-    label: "Oxygen Efficiency",
-    description: "ECLSS Performance",
+    value: "25–35 m³",
+    label: "Net Habitable Volume / Crew",
+    description: "Minimum for >180-day missions (NASA MIG Study)",
   },
   {
     icon: Shield,
-    value: "< 0.001%",
-    label: "System Failure Rate",
-    description: "Mission Critical",
+    value: ">98%",
+    label: "Radiation Shielding Efficiency",
+    description: "50 cm regolith or 20 g/cm² water-equivalent barrier",
   },
   {
     icon: Clock,
-    value: "10,000+",
-    label: "Simulation Hours",
-    description: "Validated Scenarios",
+    value: "15+ years",
+    label: "Structural Material Longevity",
+    description: "Kevlar/Vectran tested durability for inflatables",
   },
   {
     icon: Users,
-    value: "15+",
-    label: "Partner Organizations",
-    description: "Global Collaboration",
+    value: "4–6 Crew",
+    label: "Crew Configuration Range",
+    description: "Typical Mars transit & surface mission teams",
   },
 ];
+
 
 const Statistics = () => {
   const { language } = useLanguage();
