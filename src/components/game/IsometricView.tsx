@@ -45,6 +45,16 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   const [hasOverlap, setHasOverlap] = useState(false);
   const [crewTrails, setCrewTrails] = useState<Map<string, { x: number; y: number; z: number; timestamp: number }[]>>(new Map());
   const [animationFrame, setAnimationFrame] = useState(0);
+  const [astronautImage, setAstronautImage] = useState<HTMLImageElement | null>(null);
+
+  // Load astronaut image
+  useEffect(() => {
+    const img = new Image();
+    img.src = '/astronaut.png';
+    img.onload = () => {
+      setAstronautImage(img);
+    };
+  }, []);
 
   // Room colors by type
   const getRoomColor = (type: string): string => {
@@ -387,7 +397,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         }
       }
       
-      // Draw crew member as a simple figure
+      // Draw crew member as astronaut image or fallback to circle
       const moodColor = {
         'happy': '#10B981',
         'neutral': '#F59E0B',
@@ -399,35 +409,65 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       if (trail.length > 1) {
         const pulseSize = 2 + Math.sin(animationFrame / 10) * 1.5;
         const glowGradient = ctx.createRadialGradient(
-          pos.x, pos.y - 15, 0,
-          pos.x, pos.y - 15, 12 + pulseSize
+          pos.x, pos.y - 20, 0,
+          pos.x, pos.y - 20, 25 + pulseSize
         );
         glowGradient.addColorStop(0, moodColor + '80');
         glowGradient.addColorStop(1, moodColor + '00');
         
         ctx.fillStyle = glowGradient;
         ctx.beginPath();
-        ctx.arc(pos.x, pos.y - 15, 12 + pulseSize, 0, Math.PI * 2);
+        ctx.arc(pos.x, pos.y - 20, 25 + pulseSize, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Body
-      ctx.fillStyle = moodColor;
-      ctx.beginPath();
-      ctx.arc(pos.x, pos.y - 15, 8, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // White outline for better visibility
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+      // Draw astronaut image if loaded, otherwise fallback to circle
+      if (astronautImage) {
+        const imgWidth = 40;
+        const imgHeight = 40;
+        
+        // Apply color tint based on mood (using globalCompositeOperation)
+        ctx.save();
+        
+        // Draw the astronaut image
+        ctx.drawImage(
+          astronautImage,
+          pos.x - imgWidth / 2,
+          pos.y - imgHeight,
+          imgWidth,
+          imgHeight
+        );
+        
+        // Add colored overlay for mood indication
+        ctx.globalCompositeOperation = 'source-atop';
+        ctx.fillStyle = moodColor + '40'; // 25% opacity overlay
+        ctx.fillRect(
+          pos.x - imgWidth / 2,
+          pos.y - imgHeight,
+          imgWidth,
+          imgHeight
+        );
+        
+        ctx.restore();
+      } else {
+        // Fallback: Body circle
+        ctx.fillStyle = moodColor;
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y - 15, 8, 0, Math.PI * 2);
+        ctx.fill();
+        
+        // White outline for better visibility
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
 
       // Draw direction arrow if moving
       if (directionArrow !== null) {
         const arrowLength = 12;
         const arrowWidth = 6;
-        const startX = pos.x + Math.cos(directionArrow) * 10;
-        const startY = pos.y - 15 + Math.sin(directionArrow) * 10;
+        const startX = pos.x + Math.cos(directionArrow) * 20;
+        const startY = pos.y - 20 + Math.sin(directionArrow) * 20;
         const endX = startX + Math.cos(directionArrow) * arrowLength;
         const endY = startY + Math.sin(directionArrow) * arrowLength;
         
@@ -455,7 +495,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fill();
       }
 
-      // Sentiment emoji above head
+      // Sentiment emoji above head (adjusted for astronaut image)
       const sentimentEmoji = {
         'happy': '😊',
         'neutral': '😐',
@@ -463,19 +503,20 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         'exhausted': '😫'
       }[member.mood];
 
-      ctx.font = '20px sans-serif';
+      ctx.font = '24px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(sentimentEmoji, pos.x, pos.y - 35);
+      // Position emoji above the astronaut helmet
+      ctx.fillText(sentimentEmoji, pos.x, pos.y - 50);
 
       // Name tag
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(member.name.split(' ')[0], pos.x, pos.y + 5);
+      ctx.fillText(member.name.split(' ')[0], pos.x, pos.y + 10);
     });
 
     ctx.restore();
-  }, [rooms, crew, selectedRoom, hoveredRoom, cameraZoom, cameraRotation, cameraPosition, recentlyAddedObject, crewTrails, animationFrame]);
+  }, [rooms, crew, selectedRoom, hoveredRoom, cameraZoom, cameraRotation, cameraPosition, recentlyAddedObject, crewTrails, animationFrame, astronautImage]);
 
   // Helper function to get room at mouse position
   const getRoomAtPosition = (mouseX: number, mouseY: number): string | null => {
