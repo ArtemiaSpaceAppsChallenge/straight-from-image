@@ -5,56 +5,60 @@ import { useTranslations } from "@/lib/translations";
 
 const teamMembers = [
   {
-    name: "Dr. Sarah Chen",
-    role: "Aerospace Systems Engineer",
-    description: "15+ years designing life support systems for NASA missions",
-    initials: "SC",
+    name: "Roberto Braga",
+    role: "Software Engineer",
+    description: "Descrição padrão",
+    image: "https://i.imgur.com/5GbgwQ1.jpeg", // ← coloque a URL da imagem aqui
   },
   {
     name: "Marcus Johnson",
     role: "Habitat Architect",
     description: "Specialized in extreme environment habitation design",
-    initials: "MJ",
+    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
   },
   {
     name: "Dr. Priya Patel",
     role: "ECLSS Specialist",
     description: "Expert in Environmental Control and Life Support Systems",
-    initials: "PP",
+    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
   },
   {
     name: "Alex Rodriguez",
     role: "Simulation Engineer",
     description: "Develops predictive modeling for resource consumption",
-    initials: "AR",
+    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
   },
   {
     name: "Dr. Yuki Tanaka",
     role: "Human Factors Researcher",
     description: "Studies crew psychology and workflow optimization",
-    initials: "YT",
+    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
   },
   {
     name: "Emma Williams",
     role: "Systems Integration Lead",
     description: "Coordinates multi-disciplinary engineering teams",
-    initials: "EW",
+    image: "https://cdn.cauesvlima.com.br/escritorio.jpeg",
   },
 ];
 
 const About = () => {
   const { language } = useLanguage();
   const t = useTranslations(language);
-  
+
   return (
-    <section id="about" className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-12 relative z-10">
+    <section
+      id="about"
+      className="py-12 md:py-16 lg:py-20 px-4 md:px-6 lg:px-12 relative z-10"
+    >
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-center mb-8 md:mb-12 lg:mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             {t.ourTeam}
           </h2>
           <p className="text-foreground text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
-            A multidisciplinary team of aerospace engineers, system architects, and human factors specialists dedicated to advancing space habitat technology.
+            A multidisciplinary team of aerospace engineers, system architects, and human factors
+            specialists dedicated to advancing space habitat technology.
           </p>
         </div>
 
@@ -64,9 +68,13 @@ const About = () => {
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
                   <Avatar className="w-20 h-20 md:w-24 md:h-24">
-                    <AvatarImage src="" alt={member.name} />
+                    <AvatarImage src={member.image} alt={member.name} />
                     <AvatarFallback className="bg-gradient-to-br from-[#00B6DA] to-[#5045BF] text-white text-xl font-bold">
-                      {member.initials}
+                      {member.name
+                        .split(" ")
+                        .slice(0, 2)
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
                 </div>

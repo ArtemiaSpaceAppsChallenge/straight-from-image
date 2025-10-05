@@ -1,4 +1,4 @@
-import { Shield, Github, Video } from "lucide-react";
+import { Shield, Github, Video, Sprout } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/lib/translations";
 
@@ -20,6 +20,10 @@ const Footer = () => {
             <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
               {t.resources}
             </h4>
+            <a href="#" className="flex items-center justify-center md:justify-start gap-2 text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
+              <Sprout className="w-5 h-5" />
+              Seed
+            </a>
             <a href="#" className="flex items-center justify-center md:justify-start gap-2 text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
               <Video className="w-5 h-5" />
               Demo Video
