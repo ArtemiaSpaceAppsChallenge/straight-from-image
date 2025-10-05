@@ -1,10 +1,20 @@
-import { Shield, Play } from "lucide-react";
+import { Shield, Play, Languages } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { languages, useTranslations } from "@/lib/translations";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Header = () => {
   const { navigateHome } = useSmartNavigation();
+  const { language, setLanguage } = useLanguage();
+  const t = useTranslations(language);
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-[5.2px]">
@@ -22,18 +32,43 @@ const Header = () => {
               onClick={navigateHome}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors cursor-pointer"
             >
-              HOME
+              {t.home}
             </button>
             <a href="#about" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
-              ABOUT
+              {t.about}
             </a>
             <a href="#roadmap" className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
-              ROADMAP
+              {t.roadmap}
             </a>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="h-8 w-8 md:h-10 md:w-10 text-foreground hover:text-primary"
+                >
+                  <Languages className="h-4 w-4 md:h-5 md:w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-md border-white/15">
+                {Object.entries(languages).map(([code, { name, flag }]) => (
+                  <DropdownMenuItem
+                    key={code}
+                    onClick={() => setLanguage(code as any)}
+                    className="cursor-pointer"
+                  >
+                    <span className="mr-2">{flag}</span>
+                    {name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Link to="/play">
               <Button className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90 rounded-full text-xs md:text-sm lg:text-base font-bold">
                 <Play className="w-3 h-3 md:w-4 md:h-4 fill-current mr-1 md:mr-2" />
-                PLAY
+                {t.play}
               </Button>
             </Link>
           </nav>
