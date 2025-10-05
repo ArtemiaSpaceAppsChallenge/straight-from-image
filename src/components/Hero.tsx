@@ -1,4 +1,4 @@
-import { Play, Rocket, Satellite, Users, Gauge, ChevronDown } from "lucide-react";
+import { Play, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -9,125 +9,134 @@ const Hero = () => {
   const t = useTranslations(language);
   const previewImage = "https://i.imgur.com/llKLfAx.png";
 
-  const handleScrollToNext = () => {
-    const nextSection = document.querySelector('#statistics');
-    if (nextSection) {
-      nextSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
-  const stats = [
-    { icon: Rocket, value: "50+", label: "Configurations", delay: "600ms" },
-    { icon: Satellite, value: "NASA", label: "ECLSS Standard", delay: "700ms" },
-    { icon: Users, value: "6", label: "Mission Scenarios", delay: "800ms" },
-    { icon: Gauge, value: "Real-time", label: "Telemetry", delay: "900ms" },
-  ];
-
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 pb-16">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 z-0">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${previewImage})` }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/98 via-background/85 to-background/98" />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0B0F17] via-[#1a1f2e] to-[#0B0F17]">
+      {/* Cyber Grid Background */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `
+            linear-gradient(rgba(0, 182, 218, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 182, 218, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }} />
       </div>
 
-      {/* Floating Stats - Desktop Only */}
-      <div className="hidden lg:block">
-        <div className="absolute top-32 left-8 xl:left-16 z-20 animate-fade-in opacity-0 [animation-delay:600ms] [animation-fill-mode:forwards]">
-          <div className="bg-white/5 border border-white/20 rounded-2xl p-5 backdrop-blur-md hover:scale-105 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,182,218,0.4)] hover:bg-white/10">
-            <Rocket className="w-7 h-7 text-primary mb-3 animate-float" />
-            <div className="text-3xl font-bold text-foreground mb-1">50+</div>
-            <div className="text-sm text-muted-foreground">Configurations</div>
-          </div>
-        </div>
+      {/* Glowing Orbs */}
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/20 rounded-full blur-[120px] animate-pulse" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-[120px] animate-pulse [animation-delay:1s]" />
 
-        <div className="absolute top-32 right-8 xl:right-16 z-20 animate-fade-in opacity-0 [animation-delay:700ms] [animation-fill-mode:forwards]">
-          <div className="bg-white/5 border border-white/20 rounded-2xl p-5 backdrop-blur-md hover:scale-105 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,182,218,0.4)] hover:bg-white/10">
-            <Satellite className="w-7 h-7 text-primary mb-3 animate-float [animation-delay:500ms]" />
-            <div className="text-3xl font-bold text-foreground mb-1">NASA</div>
-            <div className="text-sm text-muted-foreground">ECLSS Standard</div>
-          </div>
-        </div>
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          
+          {/* Left Content */}
+          <div className="space-y-6 md:space-y-8">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/30 backdrop-blur-sm animate-fade-in">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span className="text-sm font-bold text-cyan-400 uppercase tracking-wider">NASA ECLSS Standard</span>
+            </div>
 
-        <div className="absolute bottom-32 left-8 xl:left-16 z-20 animate-fade-in opacity-0 [animation-delay:800ms] [animation-fill-mode:forwards]">
-          <div className="bg-white/5 border border-white/20 rounded-2xl p-5 backdrop-blur-md hover:scale-105 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,182,218,0.4)] hover:bg-white/10">
-            <Users className="w-7 h-7 text-primary mb-3 animate-float [animation-delay:1000ms]" />
-            <div className="text-3xl font-bold text-foreground mb-1">6</div>
-            <div className="text-sm text-muted-foreground">Mission Scenarios</div>
-          </div>
-        </div>
+            {/* Title */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black uppercase leading-none animate-fade-in [animation-delay:100ms] opacity-0 [animation-fill-mode:forwards]">
+              <span className="block text-foreground mb-2">Design Your</span>
+              <span className="block bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent drop-shadow-[0_0_30px_rgba(0,182,218,0.6)]">
+                Space Habitat
+              </span>
+            </h1>
 
-        <div className="absolute bottom-32 right-8 xl:right-16 z-20 animate-fade-in opacity-0 [animation-delay:900ms] [animation-fill-mode:forwards]">
-          <div className="bg-white/5 border border-white/20 rounded-2xl p-5 backdrop-blur-md hover:scale-105 transition-all duration-300 hover:shadow-[0_0_25px_rgba(0,182,218,0.4)] hover:bg-white/10">
-            <Gauge className="w-7 h-7 text-primary mb-3 animate-float [animation-delay:1500ms]" />
-            <div className="text-3xl font-bold text-foreground mb-1">Real-time</div>
-            <div className="text-sm text-muted-foreground">Telemetry</div>
-          </div>
-        </div>
-      </div>
+            {/* Description */}
+            <p className="text-base md:text-lg lg:text-xl text-gray-400 max-w-xl animate-fade-in [animation-delay:200ms] opacity-0 [animation-fill-mode:forwards]">
+              Build, test, and optimize Mars habitats with real NASA constraints. 50+ configurations, real-time validation.
+            </p>
 
-      {/* Main Content - Centered */}
-      <div className="relative z-10 text-center px-4 md:px-8 lg:px-12 max-w-7xl mx-auto w-full">
-        {/* Title with Animated Gradient */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-4 md:mb-6 animate-fade-in opacity-0 [animation-fill-mode:forwards] leading-tight">
-          <span className="bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent animate-gradient-shift bg-[length:200%_auto] drop-shadow-[0_0_20px_rgba(0,182,218,0.4)]">
-            {t.heroTitle}
-          </span>
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 max-w-2xl lg:max-w-3xl mx-auto mb-6 md:mb-10 animate-fade-in opacity-0 [animation-delay:200ms] [animation-fill-mode:forwards] leading-relaxed px-2">
-          {t.heroDescription}
-        </p>
-
-        {/* CTAs */}
-        <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-center mb-8 md:mb-12 animate-scale-in opacity-0 [animation-delay:400ms] [animation-fill-mode:forwards]">
-          <Link to="/play" className="w-full sm:w-auto">
-            <Button className="w-full sm:w-auto px-6 md:px-10 py-5 md:py-7 text-base md:text-xl font-bold bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90 hover:scale-105 transition-all duration-300 rounded-3xl shadow-[0_0_25px_rgba(0,182,218,0.4)] hover:shadow-[0_0_35px_rgba(0,182,218,0.6)]">
-              <Play className="w-4 h-4 md:w-5 md:h-5 fill-current mr-2" />
-              {t.play}
-            </Button>
-          </Link>
-          <Button
-            variant="outline"
-            className="w-full sm:w-auto px-6 md:px-10 py-5 md:py-7 text-base md:text-xl font-bold bg-white/5 border-2 border-white/30 hover:bg-white/10 hover:border-white/50 hover:scale-105 transition-all duration-300 rounded-3xl backdrop-blur-sm text-foreground"
-          >
-            {t.viewZoningRules}
-          </Button>
-        </div>
-
-        {/* Stats Grid - Mobile/Tablet Only */}
-        <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-2xl mx-auto lg:hidden animate-fade-in opacity-0 [animation-delay:500ms] [animation-fill-mode:forwards]">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <div 
-                key={index}
-                className="bg-white/5 border border-white/20 rounded-xl p-4 backdrop-blur-md"
-              >
-                <Icon className="w-5 h-5 text-primary mb-2 mx-auto" />
-                <div className="text-xl font-bold text-foreground mb-1">{stat.value}</div>
-                <div className="text-xs text-muted-foreground">{stat.label}</div>
+            {/* Stats Bar */}
+            <div className="flex flex-wrap gap-4 md:gap-6 animate-fade-in [animation-delay:300ms] opacity-0 [animation-fill-mode:forwards]">
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-cyan-400 to-transparent rounded-full" />
+                <div>
+                  <div className="text-2xl font-bold text-foreground">50+</div>
+                  <div className="text-xs text-gray-500 uppercase">Configs</div>
+                </div>
               </div>
-            );
-          })}
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-purple-400 to-transparent rounded-full" />
+                <div>
+                  <div className="text-2xl font-bold text-foreground">6</div>
+                  <div className="text-xs text-gray-500 uppercase">Missions</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-1 h-8 bg-gradient-to-b from-blue-400 to-transparent rounded-full" />
+                <div>
+                  <div className="text-2xl font-bold text-foreground">Real-time</div>
+                  <div className="text-xs text-gray-500 uppercase">Telemetry</div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 animate-scale-in [animation-delay:400ms] opacity-0 [animation-fill-mode:forwards]">
+              <Link to="/play" className="w-full sm:w-auto">
+                <Button className="w-full group relative overflow-hidden px-8 py-6 text-lg font-bold bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 rounded-xl transition-all duration-300 shadow-[0_0_30px_rgba(0,182,218,0.4)] hover:shadow-[0_0_40px_rgba(0,182,218,0.6)] hover:scale-105">
+                  <span className="relative z-10 flex items-center justify-center gap-2">
+                    <Play className="w-5 h-5 fill-current" />
+                    START MISSION
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto px-8 py-6 text-lg font-bold bg-white/5 border-2 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-500/50 rounded-xl transition-all duration-300 text-foreground hover:scale-105 backdrop-blur-sm"
+              >
+                VIEW RULES
+                <ChevronRight className="w-5 h-5 ml-2" />
+              </Button>
+            </div>
+          </div>
+
+          {/* Right - Image Preview */}
+          <div className="relative animate-fade-in [animation-delay:200ms] opacity-0 [animation-fill-mode:forwards]">
+            {/* Cyber Frame */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl blur-xl" />
+            <div className="relative">
+              {/* Corner Accents */}
+              <div className="absolute -top-2 -left-2 w-12 h-12 border-t-4 border-l-4 border-cyan-400 rounded-tl-lg" />
+              <div className="absolute -top-2 -right-2 w-12 h-12 border-t-4 border-r-4 border-purple-400 rounded-tr-lg" />
+              <div className="absolute -bottom-2 -left-2 w-12 h-12 border-b-4 border-l-4 border-purple-400 rounded-bl-lg" />
+              <div className="absolute -bottom-2 -right-2 w-12 h-12 border-b-4 border-r-4 border-cyan-400 rounded-br-lg" />
+              
+              {/* Image Container */}
+              <div className="relative border-2 border-cyan-500/30 rounded-xl overflow-hidden bg-black/40 backdrop-blur-sm shadow-[0_0_50px_rgba(0,182,218,0.3)]">
+                <img
+                  src={previewImage}
+                  alt="Habitat Layout Preview"
+                  className="w-full h-auto object-cover hover:scale-105 transition-transform duration-500"
+                />
+                {/* Scanline Effect */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-500/5 to-transparent animate-pulse pointer-events-none" />
+              </div>
+
+              {/* Status Badge */}
+              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 px-6 py-3 bg-gradient-to-r from-green-500/90 to-emerald-500/90 rounded-full border border-green-400/50 shadow-[0_0_20px_rgba(34,197,94,0.5)] backdrop-blur-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  <span className="text-sm font-bold text-white uppercase">System Ready</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
 
-      {/* Scroll Indicator */}
-      <button
-        onClick={handleScrollToNext}
-        className="absolute bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 animate-bounce cursor-pointer group"
-        aria-label="Scroll to next section"
-      >
-        <ChevronDown className="w-7 h-7 md:w-8 md:h-8 text-primary group-hover:text-cyan-300 transition-colors" />
-      </button>
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent pointer-events-none" />
     </section>
   );
 };
 
 export default Hero;
+
 
