@@ -173,7 +173,7 @@ export const GameContainer: React.FC = () => {
     if (!gameState.isPlaying || gameState.isPaused || !gameState.habitat) return;
 
     // Adjust movement interval based on speed: base 2000ms / speed
-    const moveInterval = 2000 / simulationSpeed;
+    const moveInterval = 400 / simulationSpeed;
 
     const moveCrewInterval = setInterval(() => {
       setGameState(prev => {
@@ -185,7 +185,7 @@ export const GameContainer: React.FC = () => {
           if (Math.random() > moveChance) return member;
 
           // Generate random movement within grid bounds (0-20)
-          const moveDistance = (0.5 + Math.random() * 1) * simulationSpeed; // Faster movement at higher speeds
+          const moveDistance = (0.05 + Math.random() * 1) * simulationSpeed; // Faster movement at higher speeds
           const angle = Math.random() * Math.PI * 2; // Random direction
           
           let newX = member.position.x + Math.cos(angle) * moveDistance;

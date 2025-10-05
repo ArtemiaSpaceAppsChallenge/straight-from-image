@@ -455,6 +455,18 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fill();
       }
 
+      // Sentiment emoji above head
+      const sentimentEmoji = {
+        'happy': '😊',
+        'neutral': '😐',
+        'stressed': '😰',
+        'exhausted': '😫'
+      }[member.mood];
+
+      ctx.font = '20px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(sentimentEmoji, pos.x, pos.y - 35);
+
       // Name tag
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '10px sans-serif';
