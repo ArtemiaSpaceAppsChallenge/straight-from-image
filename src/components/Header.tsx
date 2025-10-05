@@ -69,11 +69,11 @@ const Header = () => {
             >
               {t.roadmap}
             </button>
-            <Link to="/tool">
+            {/* <Link to="/tool">
               <button className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
                 {t.tool}
               </button>
-            </Link>
+            </Link> */}
           {/* Language Selector & Play Button 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
