@@ -71,12 +71,12 @@ export const GameHeader: React.FC<GameHeaderProps> = ({
           <Button onClick={onReset} variant="outline" size="sm">
             <RotateCcw className="w-4 h-4" />
           </Button>
-          <Button onClick={onSettings} variant="ghost" size="sm">
+          {/* <Button onClick={onSettings} variant="ghost" size="sm">
             <Settings className="w-4 h-4" />
           </Button>
           <Button onClick={onInfo} variant="ghost" size="sm">
             <Info className="w-4 h-4" />
-          </Button>
+          </Button> */}
         </div>
 
         {/* Center: Stats */}

@@ -12,26 +12,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const { navigateHome } = useSmartNavigation();
+  const { navigateHome, navigateToSection } = useSmartNavigation();
   const { language, setLanguage } = useLanguage();
   const t = useTranslations(language);
-  const handleScrollTo = (id: string) => {
-    if (window.location.pathname !== "/") {
-      navigate("/");
-      setTimeout(() => {
-        const element = document.getElementById(id);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth" });
-        }
-      }, 300);
-    } else {
-      const element = document.getElementById(id);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  };
 
   return (
     <header className="fixed top-0 w-full z-50 bg-white/10 backdrop-blur-[5.2px]">
@@ -58,22 +41,22 @@ const Header = () => {
               {t.home}
             </button>
             <button
-              onClick={() => handleScrollTo("about")}
+              onClick={() => navigateToSection("about")}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
             >
               {t.about}
             </button>
             <button
-              onClick={() => handleScrollTo("roadmap")}
+              onClick={() => navigateToSection("roadmap")}
               className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors"
             >
               {t.roadmap}
             </button>
-            <Link to="/tool">
+            {/* <Link to="/tool">
               <button className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
                 {t.tool}
               </button>
-            </Link>
+            </Link> */}
           {/* Language Selector & Play Button 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

@@ -7,7 +7,7 @@ const teamMembers = [
   {
     name: "Roberto Braga",
     role: "Software Engineer",
-    description: "God help us all",
+    description: "Developer with 6+ years shaping ideas into code",
     image: "https://i.imgur.com/g47hhrQ.jpeg",
   },
   {
@@ -17,28 +17,29 @@ const teamMembers = [
     image: "https://i.imgur.com/qt9mGS0.jpeg",
   },
   {
-    name: "Bruno Miranda Gaidargi",
+    name: "Bruno Gaidargi",
     role: "Scientific Researcher",
     description: "Mitochondria is the powerhouse of the cell",
     image: "https://i.imgur.com/c4bY9ib.jpeg",
   },
   {
-    name: "Márcio Machado Pontes",
+    name: "Márcio Machado",
     role: "Interactive Experience Engineer",
     description:
       "Develops interactive and immersive web experiences combining AI, visualization, and advanced frontend technologies.",
     image: "https://i.imgur.com/73YrIrv.jpeg",
   },
   {
-    name: "Cauê Vaz de Lima",
+    name: "Cauê Lima",
     role: "Junior Developer",
     description: "Most beautiful man of the world",
     image: "https://i.imgur.com/96sm8ja.jpeg",
   },
   {
-    name: "Mariana Silva Gimenez",
-    role: "CS student",
-    description: "I don't know",
+  name: "Mariana Gimenez",
+  role: "Software Developer",
+  description:
+    "Ex-lawyer turned developer specializing in React, JavaScript, and Python. Focused on LegalTech, automations, and making tech feel human.",
     image: "https://i.imgur.com/IieI7xv.jpeg",
   },
 ];

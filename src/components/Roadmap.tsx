@@ -4,6 +4,9 @@ import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/lib/translations";
 
+// ✅ Updated to reflect current in‑app functionality (Rooms/Objects, zoning rules, noise, min per crew, resources, crew, validation)
+// and upcoming phases (inventory/equipment with mass/volume/power, pathfinding, HVAC/thermal loops, etc.).
+
 const milestones = [
   {
     quarter: "Q4 2025",
@@ -11,10 +14,12 @@ const milestones = [
     icon: Rocket,
     status: "In Progress",
     items: [
-      "Basic habitat layout editor",
-      "NASA ECLSS zoning validation",
-      "Crew capacity modeling (2-6 astronauts)",
-      "Resource consumption baseline metrics",
+      "Build & Design with catalogs: Rooms and Objects",
+      "ECLSS zoning rules with Near/Avoid hints",
+      "Functional area sizing: min m² per crew and noise index",
+      "Real‑time resource telemetry (O₂, H₂O, Power, Food) with remaining days and efficiency",
+      "Crew simulation (Health, Energy, Hunger, Hygiene) and Crew Happiness",
+      "Validation and Compliance % engine",
     ],
   },
   {
@@ -23,22 +28,26 @@ const milestones = [
     icon: Sparkles,
     status: "Planning",
     items: [
-      "Real-time 3D visualization",
-      "Extended mission duration scenarios (30-365 days)",
-      "Advanced HVAC and thermal modeling",
-      "Integration with NASA Artemia baseline requirements",
+      "Extended mission duration scenarios (30–365 days)",
+      "Temporal consumption modeling with events (leaks/contamination)",
+      "HVAC and thermal modeling: heat sources/sinks and loops",
+      "Access and circulation analysis (pathfinding, corridor width)",
+      "Inventory/Equipment system with mass, volume, power, and heat",
+      "3D camera with presets and save/load scenes",
     ],
   },
   {
     quarter: "Q2 2026",
-    title: "Multi-Habitat Analysis",
+    title: "Multi‑Habitat Analysis",
     icon: Layers,
     status: "Future",
     items: [
-      "Comparative analysis dashboard",
-      "Export to CAD formats (STEP, IGES)",
-      "Collaborative design workspace",
-      "API for third-party integrations",
+      "Multi‑module layouts and inter‑module interfaces",
+      "Comparative scenario dashboard",
+      "STEP/IGES export and BOM/manifest (CSV)",
+      "Collaborative workspace with comments and versioning",
+      "Public gallery and shareable links",
+      "External API and webhooks",
     ],
   },
   {
@@ -48,9 +57,10 @@ const milestones = [
     status: "Future",
     items: [
       "VR walkthrough integration",
-      "AI-powered layout optimization",
-      "Predictive maintenance scheduling",
-      "Commercial space station applications",
+      "AI‑based layout optimization following rules/noise/adjacency",
+      "Predictive maintenance based on usage",
+      "Templates for commercial space stations",
+      "Optional MR deployment",
     ],
   },
 ];
@@ -67,7 +77,7 @@ const Roadmap = () => {
             {t.developmentRoadmap}
           </h2>
           <p className="text-foreground text-base md:text-lg lg:text-xl max-w-3xl mx-auto">
-            Our strategic plan to deliver a comprehensive habitat design platform, scaling from initial prototype to enterprise-grade simulation infrastructure.
+            Our strategic roadmap — from an ECLSS‑validated editor with room/object catalogs and real‑time crew/resource simulation to multi‑habitat analytics, XR and AI‑driven optimization.
           </p>
         </div>
 
