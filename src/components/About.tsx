@@ -25,7 +25,8 @@ const teamMembers = [
   {
     name: "Márcio Machado Pontes",
     role: "Interactive Experience Engineer",
-    description: "Develops interactive and immersive web experiences combining AI, visualization, and advanced frontend technologies.",
+    description:
+      "Develops interactive and immersive web experiences combining AI, visualization, and advanced frontend technologies.",
     image: "https://i.imgur.com/73YrIrv.jpeg",
   },
   {
@@ -64,11 +65,18 @@ const About = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {teamMembers.map((member) => (
-            <Card key={member.name} className="bg-white/5 border-white/15 backdrop-blur-[2px]">
+            <Card
+              key={member.name}
+              className="bg-white/5 border-white/15 backdrop-blur-[2px]"
+            >
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
-                  <Avatar className="w-20 h-20 md:w-24 md:h-24">
-                    <AvatarImage src={member.image} alt={member.name} />
+                  <Avatar className="w-20 h-20 md:w-24 md:h-24 overflow-hidden">
+                    <AvatarImage
+                      src={member.image}
+                      alt={member.name}
+                      className="object-cover object-center w-full h-full"
+                    />
                     <AvatarFallback className="bg-gradient-to-br from-[#00B6DA] to-[#5045BF] text-white text-xl font-bold">
                       {member.name
                         .split(" ")
