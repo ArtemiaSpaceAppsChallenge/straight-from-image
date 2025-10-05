@@ -26,7 +26,7 @@ const Play = () => {
               <iframe
                 className="absolute top-0 left-0 w-full h-full border-0"
                 src="about:blank"
-                title="Artemis Habitat Designer Game"
+                title="Artemia Habitat Designer Game"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />

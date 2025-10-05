@@ -26,7 +26,7 @@ const milestones = [
       "Real-time 3D visualization",
       "Extended mission duration scenarios (30-365 days)",
       "Advanced HVAC and thermal modeling",
-      "Integration with NASA Artemis baseline requirements",
+      "Integration with NASA Artemia baseline requirements",
     ],
   },
   {

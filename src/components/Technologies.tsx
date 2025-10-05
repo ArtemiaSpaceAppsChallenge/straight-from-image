@@ -21,7 +21,7 @@ const technologies = [
   },
   {
     icon: Zap,
-    name: "Artemis Aligned",
+    name: "Artemia Aligned",
     description: "Program Standards",
   },
   {

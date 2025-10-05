@@ -40,7 +40,7 @@ const Newsletter = () => {
 
       toast({
         title: "Successfully Subscribed!",
-        description: "You'll receive updates on Artemis missions",
+        description: "You'll receive updates on Artemia missions",
       });
       
       setEmail("");

@@ -24,12 +24,12 @@ const Header = () => {
             <div className="w-8 h-8 md:w-12 md:h-12 lg:w-[53px] lg:h-[53px] flex items-center justify-center">  
               <img
                 src="https://i.imgur.com/RMNA5bO.png"
-                alt="Logo Artemis"
+                alt="Logo Artemia"
                 className="w-full h-full object-contain"
               />
             </div>
             <span className="text-lg md:text-xl lg:text-2xl font-black text-foreground">
-              Artemis
+              Artemia
             </span>
           </Link>
 

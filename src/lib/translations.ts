@@ -21,8 +21,8 @@ export const translations = {
     play: 'PLAY',
     
     // Hero
-    heroTitle: 'Artemis Habitat Designer: Engineering Tomorrow\'s Space Living',
-    heroDescription: 'Advanced simulation platform for designing, validating, and optimizing habitat layouts for Artemis lunar missions and Mars colonization. Leverage NASA-compliant zoning algorithms and real-time resource consumption modeling.',
+    heroTitle: 'Artemia Habitat Designer: Engineering Tomorrow\'s Space Living',
+    heroDescription: 'Advanced simulation platform for designing, validating, and optimizing habitat layouts for Artemia lunar missions and Mars colonization. Leverage NASA-compliant zoning algorithms and real-time resource consumption modeling.',
     viewZoningRules: 'View Zoning Rules',
     configurations: 'Configurations',
     eclssStandard: 'ECLSS Standard',
@@ -72,7 +72,7 @@ export const translations = {
     cleanRoomStandards: 'Clean Room Standards',
     spacexCompatible: 'SpaceX Compatible',
     starshipIntegration: 'Starship Integration',
-    artemisAligned: 'Artemis Aligned',
+    artemiaAligned: 'Artemia Aligned',
     programStandards: 'Program Standards',
     cadIntegration: 'CAD Integration',
     stepIgesExport: 'STEP/IGES Export',
@@ -120,7 +120,7 @@ export const translations = {
     milestone2Item1: 'Real-time 3D visualization',
     milestone2Item2: 'Extended mission duration scenarios (30-365 days)',
     milestone2Item3: 'Advanced HVAC and thermal modeling',
-    milestone2Item4: 'Integration with NASA Artemis baseline requirements',
+    milestone2Item4: 'Integration with NASA Artemia baseline requirements',
     milestone3Item1: 'Comparative analysis dashboard',
     milestone3Item2: 'Export to CAD formats (STEP, IGES)',
     milestone3Item3: 'Collaborative design workspace',
@@ -131,14 +131,14 @@ export const translations = {
     milestone4Item4: 'Commercial space station applications',
     
     // Newsletter
-    stayUpdated: 'Stay Updated on Artemis Missions',
+    stayUpdated: 'Stay Updated on Artemia Missions',
     newsletterDescription: 'Get the latest updates on habitat design innovations',
     enterYourEmail: 'Enter your email',
     subscribe: 'Subscribe',
     invalidEmail: 'Invalid Email',
     invalidEmailDescription: 'Please enter a valid email address',
     successfullySubscribed: 'Successfully Subscribed!',
-    subscriptionSuccess: 'You\'ll receive updates on Artemis missions',
+    subscriptionSuccess: 'You\'ll receive updates on Artemia missions',
     subscriptionFailed: 'Subscription Failed',
     subscriptionError: 'Please try again later',
     
@@ -159,8 +159,8 @@ export const translations = {
     play: 'JOGAR',
     
     // Hero
-    heroTitle: 'Artemis Habitat Designer: Engenhando a Vida Espacial de Amanhã',
-    heroDescription: 'Plataforma avançada de simulação para projetar, validar e otimizar layouts de habitat para missões lunares Artemis e colonização de Marte. Aproveite algoritmos de zoneamento compatíveis com a NASA e modelagem de consumo de recursos em tempo real.',
+    heroTitle: 'Artemia Habitat Designer: Engenhando a Vida Espacial de Amanhã',
+    heroDescription: 'Plataforma avançada de simulação para projetar, validar e otimizar layouts de habitat para missões lunares Artemia e colonização de Marte. Aproveite algoritmos de zoneamento compatíveis com a NASA e modelagem de consumo de recursos em tempo real.',
     viewZoningRules: 'Ver Regras de Zoneamento',
     configurations: 'Configurações',
     eclssStandard: 'Padrão ECLSS',
@@ -210,7 +210,7 @@ export const translations = {
     cleanRoomStandards: 'Padrões de Sala Limpa',
     spacexCompatible: 'Compatível SpaceX',
     starshipIntegration: 'Integração Starship',
-    artemisAligned: 'Alinhado Artemis',
+    artemiaAligned: 'Alinhado Artemia',
     programStandards: 'Padrões do Programa',
     cadIntegration: 'Integração CAD',
     stepIgesExport: 'Exportação STEP/IGES',
@@ -258,7 +258,7 @@ export const translations = {
     milestone2Item1: 'Visualização 3D em tempo real',
     milestone2Item2: 'Cenários de duração de missão estendida (30-365 dias)',
     milestone2Item3: 'Modelagem térmica e HVAC avançada',
-    milestone2Item4: 'Integração com requisitos de linha de base Artemis da NASA',
+    milestone2Item4: 'Integração com requisitos de linha de base Artemia da NASA',
     milestone3Item1: 'Painel de análise comparativa',
     milestone3Item2: 'Exportação para formatos CAD (STEP, IGES)',
     milestone3Item3: 'Espaço de trabalho de design colaborativo',
@@ -269,14 +269,14 @@ export const translations = {
     milestone4Item4: 'Aplicações de estação espacial comercial',
     
     // Newsletter
-    stayUpdated: 'Fique Atualizado sobre Missões Artemis',
+    stayUpdated: 'Fique Atualizado sobre Missões Artemia',
     newsletterDescription: 'Receba as últimas atualizações sobre inovações em design de habitat',
     enterYourEmail: 'Digite seu email',
     subscribe: 'Inscrever-se',
     invalidEmail: 'Email Inválido',
     invalidEmailDescription: 'Por favor, insira um endereço de email válido',
     successfullySubscribed: 'Inscrito com Sucesso!',
-    subscriptionSuccess: 'Você receberá atualizações sobre missões Artemis',
+    subscriptionSuccess: 'Você receberá atualizações sobre missões Artemia',
     subscriptionFailed: 'Inscrição Falhou',
     subscriptionError: 'Por favor, tente novamente mais tarde',
     
@@ -297,8 +297,8 @@ export const translations = {
     play: 'JUGAR',
     
     // Hero
-    heroTitle: 'Artemis Habitat Designer: Ingeniería de la Vida Espacial del Mañana',
-    heroDescription: 'Plataforma de simulación avanzada para diseñar, validar y optimizar diseños de hábitat para misiones lunares Artemis y colonización de Marte. Aproveche algoritmos de zonificación compatibles con la NASA y modelado de consumo de recursos en tiempo real.',
+    heroTitle: 'Artemia Habitat Designer: Ingeniería de la Vida Espacial del Mañana',
+    heroDescription: 'Plataforma de simulación avanzada para diseñar, validar y optimizar diseños de hábitat para misiones lunares Artemia y colonización de Marte. Aproveche algoritmos de zonificación compatibles con la NASA y modelado de consumo de recursos en tiempo real.',
     viewZoningRules: 'Ver Reglas de Zonificación',
     configurations: 'Configuraciones',
     eclssStandard: 'Estándar ECLSS',
@@ -348,7 +348,7 @@ export const translations = {
     cleanRoomStandards: 'Estándares de Sala Limpia',
     spacexCompatible: 'Compatible SpaceX',
     starshipIntegration: 'Integración Starship',
-    artemisAligned: 'Alineado Artemis',
+    artemiaAligned: 'Alineado Artemia',
     programStandards: 'Estándares del Programa',
     cadIntegration: 'Integración CAD',
     stepIgesExport: 'Exportación STEP/IGES',
@@ -396,7 +396,7 @@ export const translations = {
     milestone2Item1: 'Visualización 3D en tiempo real',
     milestone2Item2: 'Escenarios de duración de misión extendida (30-365 días)',
     milestone2Item3: 'Modelado térmico y HVAC avanzado',
-    milestone2Item4: 'Integración con requisitos de línea base Artemis de la NASA',
+    milestone2Item4: 'Integración con requisitos de línea base Artemia de la NASA',
     milestone3Item1: 'Panel de análisis comparativo',
     milestone3Item2: 'Exportación a formatos CAD (STEP, IGES)',
     milestone3Item3: 'Espacio de trabajo de diseño colaborativo',
@@ -407,14 +407,14 @@ export const translations = {
     milestone4Item4: 'Aplicaciones de estación espacial comercial',
     
     // Newsletter
-    stayUpdated: 'Manténgase Actualizado sobre Misiones Artemis',
+    stayUpdated: 'Manténgase Actualizado sobre Misiones Artemia',
     newsletterDescription: 'Reciba las últimas actualizaciones sobre innovaciones en diseño de hábitat',
     enterYourEmail: 'Ingrese su correo electrónico',
     subscribe: 'Suscribirse',
     invalidEmail: 'Correo Inválido',
     invalidEmailDescription: 'Por favor, ingrese una dirección de correo electrónico válida',
     successfullySubscribed: '¡Suscrito Exitosamente!',
-    subscriptionSuccess: 'Recibirá actualizaciones sobre misiones Artemis',
+    subscriptionSuccess: 'Recibirá actualizaciones sobre misiones Artemia',
     subscriptionFailed: 'Suscripción Fallida',
     subscriptionError: 'Por favor, intente nuevamente más tarde',
     
