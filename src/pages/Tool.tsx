@@ -10,6 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, Info, CheckCircle2 } from "lucide-react";
+import { HabitatCanvas } from "@/components/tool/HabitatCanvas";
+import { ComponentLibrary } from "@/components/tool/ComponentLibrary";
+import { CanvasToolbar } from "@/components/tool/CanvasToolbar";
+import { PropertiesPanel } from "@/components/tool/PropertiesPanel";
+import { toast } from "sonner";
 
 type HabitatType = "metallic" | "inflatable" | "manufactured";
 type FunctionalArea = {
@@ -103,7 +108,7 @@ const Tool = () => {
     ];
   };
   
-  const [functionalAreas] = useState(getFunctionalAreas(crewSize));
+  const [functionalAreas, setFunctionalAreas] = useState(getFunctionalAreas(crewSize));
   
   const totalAllocated = functionalAreas.reduce((sum, area) => sum + area.allocatedVolume, 0);
   const remainingVolume = totalVolume - totalAllocated;
@@ -258,41 +263,40 @@ const Tool = () => {
               <Card className="p-6">
                 <h2 className="text-2xl font-bold mb-4">{t.toolFunctionalAreas}</h2>
                 
-                <div className="space-y-4">
-                  {/* Clean Areas */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-green-600">{t.toolCleanZones}</h3>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {functionalAreas.filter(a => a.category === "clean").map((area) => (
-                        <div key={area.id} className="p-4 bg-green-50 dark:bg-green-950/20 rounded-lg border-2 border-green-200 dark:border-green-800">
-                          <h4 className="font-medium mb-2">{area.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {t.toolMinVolume}: {area.minVolume.toFixed(2)} m³
-                          </p>
-                          <p className="text-sm font-semibold">
-                            {t.toolAllocated}: {area.allocatedVolume.toFixed(2)} m³
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+                  {/* Component Library */}
+                  <div className="lg:col-span-1">
+                    <ComponentLibrary functionalAreas={functionalAreas} />
                   </div>
-                  
-                  {/* Dirty Areas */}
-                  <div>
-                    <h3 className="text-lg font-semibold mb-3 text-orange-600">{t.toolDirtyZones}</h3>
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {functionalAreas.filter(a => a.category === "dirty").map((area) => (
-                        <div key={area.id} className="p-4 bg-orange-50 dark:bg-orange-950/20 rounded-lg border-2 border-orange-200 dark:border-orange-800">
-                          <h4 className="font-medium mb-2">{area.name}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {t.toolMinVolume}: {area.minVolume.toFixed(2)} m³
-                          </p>
-                          <p className="text-sm font-semibold">
-                            {t.toolAllocated}: {area.allocatedVolume.toFixed(2)} m³
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+
+                  {/* Canvas */}
+                  <div className="lg:col-span-2 space-y-3">
+                    <CanvasToolbar
+                      onZoomIn={() => toast.info("Zoom In")}
+                      onZoomOut={() => toast.info("Zoom Out")}
+                      onResetView={() => toast.info("Reset View")}
+                      onToggleGrid={() => toast.info("Toggle Grid")}
+                      onExport={() => toast.info("Export Design")}
+                      gridEnabled={false}
+                    />
+                    <HabitatCanvas
+                      radius={radius}
+                      length={length}
+                      functionalAreas={functionalAreas}
+                      onAreaUpdate={(updatedAreas) => {
+                        // Update functional areas with new volumes
+                        setFunctionalAreas(updatedAreas);
+                      }}
+                    />
+                  </div>
+
+                  {/* Properties Panel */}
+                  <div className="lg:col-span-1">
+                    <PropertiesPanel
+                      totalVolume={totalVolume}
+                      totalAllocated={totalAllocated}
+                      functionalAreas={functionalAreas}
+                    />
                   </div>
                 </div>
                 
