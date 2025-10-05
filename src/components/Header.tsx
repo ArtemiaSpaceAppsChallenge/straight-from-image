@@ -2,7 +2,7 @@ import { Play, Languages } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useSmartNavigation } from "@/hooks/useSmartNavigation";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, Language } from "@/contexts/LanguageContext";
 import { languages, useTranslations } from "@/lib/translations";
 import {
   DropdownMenu,
@@ -69,6 +69,31 @@ const Header = () => {
             >
               {t.roadmap}
             </button>
+            <Link to="/tool">
+              <button className="text-xs md:text-base lg:text-lg text-foreground hover:text-primary transition-colors">
+                {t.tool}
+              </button>
+            </Link>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-8 w-8 md:h-10 md:w-10">
+                  <Languages className="h-4 w-4 md:h-5 md:w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="bg-background/95 backdrop-blur-md z-50">
+                {Object.entries(languages).map(([code, { name, flag }]) => (
+                  <DropdownMenuItem
+                    key={code}
+                    onClick={() => setLanguage(code as Language)}
+                    className={language === code ? 'bg-accent' : ''}
+                  >
+                    <span className="mr-2">{flag}</span>
+                    {name}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             <Link to="/play">
               <Button className="h-8 md:h-10 lg:h-12 px-4 md:px-6 lg:px-8 bg-gradient-to-r from-[#00B6DA] to-[#5045BF] hover:opacity-90 rounded-full text-xs md:text-sm lg:text-base font-bold">
