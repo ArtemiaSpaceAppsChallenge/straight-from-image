@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="flex items-center justify-center md:justify-start">
             <div className="w-32 h-32 md:w-40 md:h-40 lg:w-[239px] lg:h-[239px] flex items-center justify-center">
               <img
-                src="https://i.imgur.com/RMNA5bO.png" // ← coloque aqui a URL da logo
+                src="https://i.imgur.com/tdR0X92.png"
                 alt="Logo Artemis"
                 className="w-full h-full object-contain"
               />
