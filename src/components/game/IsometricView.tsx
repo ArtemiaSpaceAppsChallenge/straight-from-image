@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Room, CrewMember, PlacedObject, Position } from '@/types/game';
 import { Card } from '@/components/ui/card';
-import { wouldRoomOverlap } from '@/lib/roomCollision';
+import { wouldRoomOverlap } from '../../lib/roomCollision';
 
 interface CrewTrail {
   crewId: string;
@@ -56,6 +56,36 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     };
   }, []);
 
+  // <<< INÍCIO DA CORREÇÃO DE SCROLL >>>
+  // Este useEffect gerencia o evento 'wheel' manualmente para controlar o zoom.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // A função que lida com o evento de scroll do mouse
+    const handleWheel = (e: WheelEvent) => {
+      // Impede o comportamento padrão do navegador (rolar a página)
+      e.preventDefault();
+
+      const zoomSpeed = 0.001;
+      const newZoom = Math.max(0.1, Math.min(3, cameraZoom - e.deltaY * zoomSpeed));
+      
+      onCameraChange({
+        zoom: newZoom
+      });
+    };
+
+    // Adiciona o event listener ao canvas. A opção { passive: false } é crucial.
+    // Ela informa ao navegador que vamos chamar preventDefault() e que ele deve esperar.
+    canvas.addEventListener('wheel', handleWheel, { passive: false });
+
+    // Função de limpeza: remove o listener quando o componente é desmontado para evitar memory leaks.
+    return () => {
+      canvas.removeEventListener('wheel', handleWheel);
+    };
+  }, [cameraZoom, onCameraChange]); // Dependências: a função é recriada se o zoom ou a função de callback mudarem.
+  // <<< FIM DA CORREÇÃO DE SCROLL >>>
+
   // Room colors by type
   const getRoomColor = (type: string): string => {
     const colors: Record<string, string> = {
@@ -84,7 +114,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       const trail = newTrails.get(member.id) || [];
       const lastPos = trail[trail.length - 1];
       
-      // Only add new position if crew member has moved
       if (!lastPos || 
           Math.abs(lastPos.x - member.position.x) > 0.1 ||
           Math.abs(lastPos.y - member.position.y) > 0.1 ||
@@ -97,7 +126,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           timestamp: now
         });
         
-        // Keep only last 5 positions (trail effect)
         if (trail.length > 5) {
           trail.shift();
         }
@@ -105,7 +133,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         newTrails.set(member.id, trail);
       }
       
-      // Remove old positions (older than 3 seconds)
       const filtered = trail.filter(pos => now - pos.timestamp < 3000);
       if (filtered.length !== trail.length) {
         newTrails.set(member.id, filtered);
@@ -119,7 +146,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   useEffect(() => {
     const interval = setInterval(() => {
       setAnimationFrame(prev => (prev + 1) % 60);
-    }, 50); // 20 FPS animation
+    }, 50);
     
     return () => clearInterval(interval);
   }, []);
@@ -127,32 +154,24 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Apply camera transformations
     ctx.save();
     ctx.translate(canvas.width / 2 + cameraPosition.x, canvas.height / 2 + cameraPosition.y);
     ctx.scale(cameraZoom, cameraZoom);
     ctx.rotate((cameraRotation * Math.PI) / 180);
 
-    // Isometric projection helper
     const toIsometric = (x: number, y: number, z: number = 0) => {
-      const isoX = (x - y) * 0.866; // cos(30°)
+      const isoX = (x - y) * 0.866;
       const isoY = (x + y) * 0.5 - z;
       return { x: isoX * 30, y: isoY * 30 };
     };
 
-    // Draw grid (0-20 to match constraint system)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
     ctx.lineWidth = 1;
     
-    // Draw the main 20x20 grid - optimized line drawing
-    // Vertical lines (X-axis)
     for (let i = 0; i <= 20; i++) {
       ctx.beginPath();
       const start = toIsometric(i, 0);
@@ -162,7 +181,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.stroke();
     }
     
-    // Horizontal lines (Y-axis)
     for (let j = 0; j <= 20; j++) {
       ctx.beginPath();
       const start = toIsometric(0, j);
@@ -172,11 +190,9 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.stroke();
     }
     
-    // Draw boundary lines (thicker) to show the 20x20 constraint area
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
     ctx.lineWidth = 3;
     
-    // Draw border of the 20x20 grid
     const corner1 = toIsometric(0, 0);
     const corner2 = toIsometric(20, 0);
     const corner3 = toIsometric(20, 20);
@@ -190,7 +206,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     ctx.closePath();
     ctx.stroke();
     
-    // Draw coordinate labels at corners (with reset transform for readable text)
     ctx.restore();
     ctx.save();
     ctx.translate(canvas.width / 2 + cameraPosition.x, canvas.height / 2 + cameraPosition.y);
@@ -212,13 +227,11 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     ctx.fillText('(0,20)', maxY.x, maxY.y + labelOffset);
     ctx.fillText('(20,20)', maxXY.x, maxXY.y + labelOffset);
 
-    // Draw rooms
     rooms.forEach(room => {
       const isSelected = room.id === selectedRoom;
       const isHovered = room.id === hoveredRoom;
       const isBeingDragged = room.id === draggedRoom && isDraggingRoom;
       
-      // Use preview position if this room is being dragged
       const roomPos = isBeingDragged && previewPosition ? previewPosition : room.position;
       
       const pos = toIsometric(roomPos.x, roomPos.y, roomPos.z || 0);
@@ -226,7 +239,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       const depth = room.dimensions.depth || room.dimensions.width;
       const height = room.dimensions.height * 30;
 
-      // Draw room base (floor)
       const p1 = toIsometric(roomPos.x, roomPos.y);
       const p2 = toIsometric(roomPos.x + room.dimensions.width, roomPos.y);
       const p3 = toIsometric(
@@ -235,14 +247,12 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       );
       const p4 = toIsometric(roomPos.x, roomPos.y + depth);
 
-      // Adjust opacity and color when dragging
-      // RED if overlapping while being dragged, otherwise normal colors
       const baseColor = (isBeingDragged && hasOverlap) 
-        ? '#FF0000' // Bright red for overlap
+        ? '#FF0000'
         : getRoomColor(room.type);
       
       ctx.fillStyle = isBeingDragged
-        ? baseColor + (hasOverlap ? 'CC' : 'AA') // More opaque when overlapping
+        ? baseColor + (hasOverlap ? 'CC' : 'AA')
         : isSelected
         ? baseColor + 'DD'
         : isHovered
@@ -257,13 +267,11 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.closePath();
       ctx.fill();
 
-      // Draw walls
       const wallColor = (isBeingDragged && hasOverlap) 
-        ? '#FF0000' // Red walls when overlapping
+        ? '#FF0000'
         : getRoomColor(room.type);
       ctx.fillStyle = wallColor + '66';
       
-      // Left wall
       ctx.beginPath();
       ctx.moveTo(p1.x, p1.y);
       ctx.lineTo(p1.x, p1.y - height);
@@ -272,7 +280,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.closePath();
       ctx.fill();
 
-      // Right wall
       ctx.beginPath();
       ctx.moveTo(p2.x, p2.y);
       ctx.lineTo(p2.x, p2.y - height);
@@ -281,15 +288,14 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.closePath();
       ctx.fill();
 
-      // Draw room border
       if (isBeingDragged) {
-        ctx.strokeStyle = '#FFD700'; // Gold color when dragging
+        ctx.strokeStyle = '#FFD700';
         ctx.lineWidth = 3;
-        ctx.setLineDash([10, 5]); // Dashed line
+        ctx.setLineDash([10, 5]);
       } else {
         ctx.strokeStyle = isSelected ? '#FFFFFF' : 'rgba(255, 255, 255, 0.3)';
         ctx.lineWidth = isSelected ? 3 : 1.5;
-        ctx.setLineDash([]); // Solid line
+        ctx.setLineDash([]);
       }
       
       ctx.beginPath();
@@ -300,16 +306,13 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.closePath();
       ctx.stroke();
       
-      // Reset line dash for other elements
       ctx.setLineDash([]);
 
-      // Draw room label
       ctx.fillStyle = isBeingDragged ? '#FFD700' : '#FFFFFF';
       ctx.font = isBeingDragged ? 'bold 12px sans-serif' : '12px sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText(room.name, pos.x, pos.y - height - 10);
 
-      // Draw validation indicator
       if (!room.isValid) {
         ctx.fillStyle = '#EF4444';
         ctx.beginPath();
@@ -317,23 +320,19 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fill();
       }
 
-      // Draw objects in room
       room.objects.forEach(obj => {
         const objPos = toIsometric(obj.position.x, obj.position.y, obj.position.z || 0);
         const isRecent = obj.id === recentlyAddedObject;
         
-        // Draw object shadow
         ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
         ctx.beginPath();
         ctx.ellipse(objPos.x, objPos.y + 5, 8, 4, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw object icon with animation for recently added
         ctx.font = isRecent ? '24px sans-serif' : '18px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // Add glow effect for recently added objects
         if (isRecent) {
           ctx.shadowColor = '#FFD700';
           ctx.shadowBlur = 15;
@@ -346,7 +345,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fillText(obj.type.icon, objPos.x, objPos.y - 10);
         ctx.shadowBlur = 0;
 
-        // Draw sparkle effect for recently added
         if (isRecent) {
           const sparkles = [
             { x: -15, y: -15 }, { x: 15, y: -15 },
@@ -362,20 +360,17 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       });
     });
 
-    // Draw crew members with movement effects
     crew.forEach(member => {
       const pos = toIsometric(member.position.x, member.position.y, member.position.z || 0);
       const trail = crewTrails.get(member.id) || [];
       
-      // Draw movement trail (ghost positions)
       if (trail.length > 1) {
         trail.forEach((trailPos, index) => {
-          if (index === trail.length - 1) return; // Skip current position
+          if (index === trail.length - 1) return;
           
           const trailIsoPos = toIsometric(trailPos.x, trailPos.y, trailPos.z);
-          const opacity = (index / trail.length) * 0.3; // Fade out older positions
+          const opacity = (index / trail.length) * 0.3;
           
-          // Trail circle
           ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
           ctx.beginPath();
           ctx.arc(trailIsoPos.x, trailIsoPos.y - 15, 6, 0, Math.PI * 2);
@@ -383,7 +378,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         });
       }
       
-      // Calculate movement direction for arrow
       let directionArrow = null;
       if (trail.length >= 2) {
         const current = trail[trail.length - 1];
@@ -397,7 +391,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         }
       }
       
-      // Draw crew member as astronaut image or fallback to circle
       const moodColor = {
         'happy': '#10B981',
         'neutral': '#F59E0B',
@@ -405,7 +398,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         'exhausted': '#EF4444'
       }[member.mood];
 
-      // Animated pulsing glow (when moving)
       if (trail.length > 1) {
         const pulseSize = 2 + Math.sin(animationFrame / 10) * 1.5;
         const glowGradient = ctx.createRadialGradient(
@@ -421,15 +413,12 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fill();
       }
 
-      // Draw astronaut image if loaded, otherwise fallback to circle
       if (astronautImage) {
         const imgWidth = 40;
         const imgHeight = 40;
         
-        // Apply color tint based on mood (using globalCompositeOperation)
         ctx.save();
         
-        // Draw the astronaut image
         ctx.drawImage(
           astronautImage,
           pos.x - imgWidth / 2,
@@ -438,9 +427,8 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           imgHeight
         );
         
-        // Add colored overlay for mood indication
         ctx.globalCompositeOperation = 'source-atop';
-        ctx.fillStyle = moodColor + '40'; // 25% opacity overlay
+        ctx.fillStyle = moodColor + '40';
         ctx.fillRect(
           pos.x - imgWidth / 2,
           pos.y - imgHeight,
@@ -450,19 +438,16 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         
         ctx.restore();
       } else {
-        // Fallback: Body circle
         ctx.fillStyle = moodColor;
         ctx.beginPath();
         ctx.arc(pos.x, pos.y - 15, 8, 0, Math.PI * 2);
         ctx.fill();
         
-        // White outline for better visibility
         ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 1.5;
         ctx.stroke();
       }
 
-      // Draw direction arrow if moving
       if (directionArrow !== null) {
         const arrowLength = 12;
         const arrowWidth = 6;
@@ -471,7 +456,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         const endX = startX + Math.cos(directionArrow) * arrowLength;
         const endY = startY + Math.sin(directionArrow) * arrowLength;
         
-        // Arrow shaft
         ctx.strokeStyle = '#FFFFFF';
         ctx.lineWidth = 2;
         ctx.beginPath();
@@ -479,7 +463,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.lineTo(endX, endY);
         ctx.stroke();
         
-        // Arrow head
         ctx.fillStyle = '#FFFFFF';
         ctx.beginPath();
         ctx.moveTo(endX, endY);
@@ -495,7 +478,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.fill();
       }
 
-      // Sentiment emoji above head (adjusted for astronaut image)
       const sentimentEmoji = {
         'happy': '😊',
         'neutral': '😐',
@@ -505,10 +487,8 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
 
       ctx.font = '24px sans-serif';
       ctx.textAlign = 'center';
-      // Position emoji above the astronaut helmet
       ctx.fillText(sentimentEmoji, pos.x, pos.y - 50);
 
-      // Name tag
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '10px sans-serif';
       ctx.textAlign = 'center';
@@ -518,7 +498,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     ctx.restore();
   }, [rooms, crew, selectedRoom, hoveredRoom, cameraZoom, cameraRotation, cameraPosition, recentlyAddedObject, crewTrails, animationFrame, astronautImage]);
 
-  // Helper function to get room at mouse position
   const getRoomAtPosition = (mouseX: number, mouseY: number): string | null => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
@@ -527,27 +506,22 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     const canvasX = mouseX - rect.left;
     const canvasY = mouseY - rect.top;
 
-    // Convert screen coordinates to world coordinates
     const centerX = canvas.width / 2 + cameraPosition.x;
     const centerY = canvas.height / 2 + cameraPosition.y;
     
     const worldX = (canvasX - centerX) / cameraZoom;
     const worldY = (canvasY - centerY) / cameraZoom;
 
-    // Apply rotation inverse
     const cos = Math.cos((-cameraRotation * Math.PI) / 180);
     const sin = Math.sin((-cameraRotation * Math.PI) / 180);
     const rotatedX = worldX * cos - worldY * sin;
     const rotatedY = worldX * sin + worldY * cos;
 
-    // Convert from isometric to grid coordinates
     const gridX = (rotatedX / 30 + rotatedY / 15) / 0.866;
     const gridY = (rotatedY / 15 - rotatedX / 30) / 0.866;
 
-    // Increased clickable margin - makes it easier to click on rooms
-    const clickMargin = 0.5; // 0.5 units of margin around each room
+    const clickMargin = 0.5;
 
-    // Check which room contains this point (with expanded hitbox)
     for (const room of rooms) {
       const depth = room.dimensions.depth || room.dimensions.width;
       if (gridX >= room.position.x - clickMargin && 
@@ -561,13 +535,11 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     return null;
   };
 
-  // Mouse event handlers for camera interaction
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const clickedRoom = getRoomAtPosition(e.clientX, e.clientY);
     
     if (clickedRoom && !e.shiftKey && !e.ctrlKey) {
-      // Start room dragging - ONLY set room-specific states
-      setDragMode('room'); // Set mode first
+      setDragMode('room');
       setIsDraggingRoom(true);
       setDraggedRoom(clickedRoom);
       
@@ -580,13 +552,11 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       setIsDragging(true);
       setDragStart({ x: e.clientX, y: e.clientY });
     } else if (e.shiftKey) {
-      // Shift for rotation - camera control
-      setDragMode('rotate'); // Set mode first
+      setDragMode('rotate');
       setIsDragging(true);
       setDragStart({ x: e.clientX, y: e.clientY });
     } else {
-      // Default to pan - camera control
-      setDragMode('pan'); // Set mode first
+      setDragMode('pan');
       setIsDragging(true);
       setDragStart({ x: e.clientX, y: e.clientY });
     }
@@ -595,7 +565,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Update hovered room even when not dragging
     const hoveredRoomId = getRoomAtPosition(e.clientX, e.clientY);
     setHoveredRoom(hoveredRoomId);
 
@@ -604,7 +573,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     const deltaX = e.clientX - dragStart.x;
     const deltaY = e.clientY - dragStart.y;
 
-    // Handle camera pan (only when not dragging a room)
     if (dragMode === 'pan') {
       onCameraChange({
         position: {
@@ -615,7 +583,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       });
       setDragStart({ x: e.clientX, y: e.clientY });
     } 
-    // Handle camera rotation (only when not dragging a room)
     else if (dragMode === 'rotate') {
       const rotationSpeed = 0.5;
       onCameraChange({
@@ -623,10 +590,8 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       });
       setDragStart({ x: e.clientX, y: e.clientY });
     } else if (dragMode === 'room' && draggedRoom) {
-      // Move the room with preview
       const room = rooms.find(r => r.id === draggedRoom);
       if (room) {
-        // Convert mouse movement to grid movement with better sensitivity
         const gridDeltaX = Math.round(deltaX / (20 * cameraZoom));
         const gridDeltaY = Math.round(deltaY / (20 * cameraZoom));
         
@@ -636,7 +601,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           z: room.position.z || 0
         };
         
-        // Clamp to grid bounds
         const maxX = 20 - room.dimensions.width;
         const maxY = 20 - (room.dimensions.depth || room.dimensions.width);
         const clampedPosition = {
@@ -645,7 +609,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           z: Math.max(0, newPosition.z)
         };
         
-        // Check for overlap with other rooms
         const otherRooms = rooms.filter(r => r.id !== draggedRoom);
         const wouldOverlap = wouldRoomOverlap(
           clampedPosition,
@@ -653,17 +616,14 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           otherRooms
         );
         
-        // Update overlap state for visual feedback
         setHasOverlap(wouldOverlap);
         
-        // Update preview position
         setPreviewPosition(clampedPosition);
       }
     }
   };
 
   const handleMouseUp = () => {
-    // If we were dragging a room, finalize the position
     if (isDraggingRoom && draggedRoom && previewPosition) {
       onRoomMove(draggedRoom, previewPosition);
     }
@@ -672,21 +632,10 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     setIsDraggingRoom(false);
     setDraggedRoom(null);
     setPreviewPosition(null);
-    setHasOverlap(false); // Reset overlap state
-  };
-
-  const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
-    const zoomSpeed = 0.001;
-    const newZoom = Math.max(0.1, Math.min(3, cameraZoom - e.deltaY * zoomSpeed));
-    
-    onCameraChange({
-      zoom: newZoom
-    });
+    setHasOverlap(false);
   };
 
   const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    // Only handle clicks if not dragging
     if (isDragging) return;
     
     const canvas = canvasRef.current;
@@ -696,8 +645,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Simple click detection - check if click is within any room bounds
-    // This is a simplified version; you'd want more accurate hit detection
     rooms.forEach(room => {
       const centerX = canvas.width / 2 + (room.position.x - room.position.y) * 30 * cameraZoom;
       const centerY = canvas.height / 2 + (room.position.x + room.position.y) * 15 * cameraZoom;
@@ -721,7 +668,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
-          onWheel={handleWheel}
+          // A prop onWheel foi removida daqui e movida para o useEffect
           className={`w-full h-full ${
             isDragging 
               ? dragMode === 'rotate' 
@@ -736,7 +683,6 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           style={{ minHeight: '400px' }}
         />
         
-        {/* Camera controls overlay */}
         <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-lg p-2 text-xs text-white">
           <div className="text-cyan-400 font-semibold mb-1">Controls</div>
           <div>🖱️ Click + Drag Room: Move it</div>
@@ -760,3 +706,4 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     </Card>
   );
 };
+
