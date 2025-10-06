@@ -53,7 +53,7 @@ const Footer = () => {
             </a>
           </div>
           
-          <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
+          {/* <div className="space-y-4 md:space-y-6 lg:space-y-[57px] text-center md:text-left">
             <h4 className="text-foreground text-lg md:text-xl leading-6 font-bold">
               {t.legal}
             </h4>
@@ -63,7 +63,7 @@ const Footer = () => {
             <a href="#" className="block text-foreground hover:text-primary transition-colors text-lg md:text-xl leading-6">
               Terms of Service
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>
