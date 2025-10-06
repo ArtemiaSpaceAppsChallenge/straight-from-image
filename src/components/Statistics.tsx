@@ -1,4 +1,4 @@
-import { Gauge, Shield, Clock, Users } from "lucide-react";
+import { Gauge, Shield, Clock, Users, Activity, AlertTriangle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/lib/translations";
 
