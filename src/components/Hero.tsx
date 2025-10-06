@@ -86,13 +86,13 @@ const Hero = () => {
                   <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
                 </Button>
               </Link>
-              <Button
+              {/* <Button
                 variant="outline"
                 className="w-full sm:w-auto px-8 py-6 text-lg font-bold bg-white/5 border-2 border-cyan-500/30 hover:bg-cyan-500/10 hover:border-cyan-500/50 rounded-xl transition-all duration-300 text-foreground hover:scale-105 backdrop-blur-sm"
               >
                 VIEW RULES
                 <ChevronRight className="w-5 h-5 ml-2" />
-              </Button>
+              </Button> */}
             </div>
           </div>
 
