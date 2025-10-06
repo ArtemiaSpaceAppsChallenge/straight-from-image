@@ -507,15 +507,27 @@ export const GameContainer: React.FC = () => {
     }));
   };
 
-  const handleRoomMove = (roomId: string, newPosition: { x: number; y: number; z?: number }) => {
+  const handleRoomMove = (roomId: string, newPosition: { x: number; y: number; z?: number }, rotation?: number) => {
     if (!gameState.habitat) return;
 
     const room = gameState.habitat.rooms.find(r => r.id === roomId);
     if (!room) return;
 
-    // Check if the new position would cause overlaps
+    // Calculate dimensions based on rotation
+    const isRotated = rotation === 90 || rotation === 270;
+    const effectiveWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+    const effectiveDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+    
+    // Create dimensions object for overlap check
+    const testDimensions = {
+      width: effectiveWidth,
+      height: room.dimensions.height,
+      depth: effectiveDepth
+    };
+
+    // Check if the new position would cause overlaps with rotated dimensions
     const otherRooms = gameState.habitat.rooms.filter(r => r.id !== roomId);
-    if (wouldRoomOverlap(newPosition, room.dimensions, otherRooms)) {
+    if (wouldRoomOverlap(newPosition, testDimensions, otherRooms)) {
       toast({
         title: "Cannot Move Room",
         description: "Room would overlap with another room at this position.",
@@ -524,9 +536,9 @@ export const GameContainer: React.FC = () => {
       return;
     }
 
-    // Ensure the room stays within bounds
-    const maxX = 20 - room.dimensions.width;
-    const maxY = 20 - (room.dimensions.depth || room.dimensions.width);
+    // Ensure the room stays within bounds with rotated dimensions
+    const maxX = 20 - effectiveWidth;
+    const maxY = 20 - effectiveDepth;
     const clampedPosition = {
       x: Math.max(0, Math.min(maxX, newPosition.x)),
       y: Math.max(0, Math.min(maxY, newPosition.y)),
@@ -539,7 +551,55 @@ export const GameContainer: React.FC = () => {
         ...prev.habitat,
         rooms: prev.habitat.rooms.map(r => 
           r.id === roomId 
-            ? { ...r, position: clampedPosition }
+            ? { ...r, position: clampedPosition, rotation: rotation || 0 }
+            : r
+        ),
+        lastModified: new Date()
+      } : null
+    }));
+
+    const rotationText = rotation ? ` (rotated ${rotation}°)` : '';
+    toast({
+      title: "Room Moved",
+      description: `${room.name} moved to position (${clampedPosition.x}, ${clampedPosition.y}, ${clampedPosition.z})${rotationText}`,
+    });
+  };
+
+  const handleObjectMove = (roomId: string, objectId: string, newPosition: { x: number; y: number; z?: number }) => {
+    if (!gameState.habitat) return;
+
+    const room = gameState.habitat.rooms.find(r => r.id === roomId);
+    if (!room) return;
+
+    const obj = room.objects.find(o => o.id === objectId);
+    if (!obj) return;
+
+    // Keep object within room bounds
+    const minX = room.position.x;
+    const maxX = room.position.x + room.dimensions.width - obj.type.dimensions.width;
+    const minY = room.position.y;
+    const maxY = room.position.y + (room.dimensions.depth || room.dimensions.width) - obj.type.dimensions.height;
+    
+    const clampedPosition = {
+      x: Math.max(minX, Math.min(maxX, newPosition.x)),
+      y: Math.max(minY, Math.min(maxY, newPosition.y)),
+      z: newPosition.z || obj.position.z || 0
+    };
+
+    setGameState(prev => ({
+      ...prev,
+      habitat: prev.habitat ? {
+        ...prev.habitat,
+        rooms: prev.habitat.rooms.map(r => 
+          r.id === roomId 
+            ? {
+                ...r,
+                objects: r.objects.map(o =>
+                  o.id === objectId
+                    ? { ...o, position: clampedPosition }
+                    : o
+                )
+              }
             : r
         ),
         lastModified: new Date()
@@ -547,8 +607,8 @@ export const GameContainer: React.FC = () => {
     }));
 
     toast({
-      title: "Room Moved",
-      description: `${room.name} moved to position (${clampedPosition.x}, ${clampedPosition.y}, ${clampedPosition.z})`,
+      title: "Object Moved",
+      description: `${obj.type.name} moved to position (${clampedPosition.x}, ${clampedPosition.y}, ${clampedPosition.z})`,
     });
   };
 
@@ -627,6 +687,7 @@ export const GameContainer: React.FC = () => {
               selectedRoom={gameState.selectedRoom}
               onRoomSelect={handleRoomSelect}
               onRoomMove={handleRoomMove}
+              onObjectMove={handleObjectMove}
               cameraZoom={gameState.camera.zoom}
               cameraRotation={gameState.camera.rotation}
               cameraPosition={gameState.camera.position}

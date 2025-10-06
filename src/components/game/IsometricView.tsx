@@ -13,7 +13,8 @@ interface IsometricViewProps {
   crew: CrewMember[];
   selectedRoom: string | null;
   onRoomSelect: (roomId: string) => void;
-  onRoomMove: (roomId: string, newPosition: { x: number; y: number; z?: number }) => void;
+  onRoomMove: (roomId: string, newPosition: { x: number; y: number; z?: number }, rotation?: number) => void;
+  onObjectMove?: (roomId: string, objectId: string, newPosition: { x: number; y: number; z?: number }) => void;
   cameraZoom: number;
   cameraRotation: number;
   cameraPosition: Position;
@@ -27,6 +28,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   selectedRoom,
   onRoomSelect,
   onRoomMove,
+  onObjectMove,
   cameraZoom,
   cameraRotation,
   cameraPosition,
@@ -37,17 +39,23 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
   const [hoveredRoom, setHoveredRoom] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [dragMode, setDragMode] = useState<'pan' | 'rotate' | 'room'>('pan');
+  const [dragMode, setDragMode] = useState<'pan' | 'rotate' | 'room' | 'object'>('pan');
   const [draggedRoom, setDraggedRoom] = useState<string | null>(null);
   const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
   const [isDraggingRoom, setIsDraggingRoom] = useState(false);
   const [previewPosition, setPreviewPosition] = useState<{ x: number; y: number; z: number } | null>(null);
+  const [previewRotation, setPreviewRotation] = useState<number>(0); // Track rotation during drag (0, 90, 180, 270)
   const [hasOverlap, setHasOverlap] = useState(false);
   const [crewTrails, setCrewTrails] = useState<Map<string, { x: number; y: number; z: number; timestamp: number }[]>>(new Map());
   const [animationFrame, setAnimationFrame] = useState(0);
   const [astronautImage, setAstronautImage] = useState<HTMLImageElement | null>(null);
   const [hoveredObject, setHoveredObject] = useState<{ object: PlacedObject; room: Room; mousePos: { x: number; y: number } } | null>(null);
   const [mousePosition, setMousePosition] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  
+  // Object dragging states
+  const [draggedObject, setDraggedObject] = useState<{ objectId: string; roomId: string } | null>(null);
+  const [isDraggingObject, setIsDraggingObject] = useState(false);
+  const [objectPreviewPosition, setObjectPreviewPosition] = useState<{ x: number; y: number; z: number } | null>(null);
 
   // Load astronaut image
   useEffect(() => {
@@ -125,6 +133,62 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     
     return () => clearInterval(interval);
   }, []);
+
+  // Keyboard handler for room rotation during drag
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Only allow rotation when dragging a room
+      if (!isDraggingRoom || !draggedRoom) return;
+      
+      if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        
+        // Rotate 90 degrees clockwise
+        setPreviewRotation(prev => (prev + 90) % 360);
+        
+        // Get the room being dragged
+        const room = rooms.find(r => r.id === draggedRoom);
+        if (room && previewPosition) {
+          // Get current dimensions based on rotation
+          const currentRotation = previewRotation;
+          const isRotated = (currentRotation === 90 || currentRotation === 270);
+          
+          // Calculate new dimensions after rotation
+          const currentWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+          const currentDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+          
+          // After rotation, dimensions swap
+          const newWidth = currentDepth;
+          const newDepth = currentWidth;
+          
+          // Adjust position to keep room within bounds
+          const maxX = 20 - newWidth;
+          const maxY = 20 - newDepth;
+          
+          const adjustedPosition = {
+            x: Math.max(0, Math.min(maxX, previewPosition.x)),
+            y: Math.max(0, Math.min(maxY, previewPosition.y)),
+            z: previewPosition.z
+          };
+          
+          // Check for overlaps with new dimensions
+          const otherRooms = rooms.filter(r => r.id !== draggedRoom);
+          const testDimensions = {
+            width: newWidth,
+            height: room.dimensions.height,
+            depth: newDepth
+          };
+          
+          const wouldOverlap = wouldRoomOverlap(adjustedPosition, testDimensions, otherRooms);
+          setHasOverlap(wouldOverlap);
+          setPreviewPosition(adjustedPosition);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isDraggingRoom, draggedRoom, previewRotation, previewPosition, rooms]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -223,16 +287,23 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       // Use preview position if this room is being dragged
       const roomPos = isBeingDragged && previewPosition ? previewPosition : room.position;
       
+      // Calculate dimensions considering rotation
+      // Use preview rotation if dragging, otherwise use stored rotation
+      const currentRotation = isBeingDragged ? previewRotation : (room.rotation || 0);
+      const isRotated = currentRotation === 90 || currentRotation === 270;
+      const roomWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+      const roomDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+      
       const pos = toIsometric(roomPos.x, roomPos.y, roomPos.z || 0);
-      const width = room.dimensions.width * 30;
-      const depth = room.dimensions.depth || room.dimensions.width;
+      const width = roomWidth * 30;
+      const depth = roomDepth;
       const height = room.dimensions.height * 30;
 
       // Draw room base (floor)
       const p1 = toIsometric(roomPos.x, roomPos.y);
-      const p2 = toIsometric(roomPos.x + room.dimensions.width, roomPos.y);
+      const p2 = toIsometric(roomPos.x + roomWidth, roomPos.y);
       const p3 = toIsometric(
-        roomPos.x + room.dimensions.width,
+        roomPos.x + roomWidth,
         roomPos.y + depth
       );
       const p4 = toIsometric(roomPos.x, roomPos.y + depth);
@@ -309,7 +380,8 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
       ctx.fillStyle = isBeingDragged ? '#FFD700' : '#FFFFFF';
       ctx.font = isBeingDragged ? 'bold 12px sans-serif' : '12px sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(room.name, pos.x, pos.y - height - 10);
+      const rotationIndicator = currentRotation > 0 ? ` ↻${currentRotation}°` : '';
+      ctx.fillText(room.name + rotationIndicator, pos.x, pos.y - height - 10);
 
       // Draw validation indicator
       if (!room.isValid) {
@@ -321,7 +393,16 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
 
       // Draw objects in room
       room.objects.forEach(obj => {
-        const objPos = toIsometric(obj.position.x, obj.position.y, obj.position.z || 0);
+        // Use preview position if this object is being dragged
+        const isBeingDragged = isDraggingObject && 
+                              draggedObject?.objectId === obj.id && 
+                              draggedObject?.roomId === room.id;
+        
+        const position = isBeingDragged && objectPreviewPosition 
+          ? objectPreviewPosition 
+          : obj.position;
+        
+        const objPos = toIsometric(position.x, position.y, position.z || 0);
         const isRecent = obj.id === recentlyAddedObject;
         
         // Draw object shadow
@@ -330,14 +411,14 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         ctx.ellipse(objPos.x, objPos.y + 5, 8, 4, 0, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw object icon with animation for recently added
-        ctx.font = isRecent ? '24px sans-serif' : '18px sans-serif';
+        // Draw object icon with animation for recently added or being dragged
+        ctx.font = (isRecent || isBeingDragged) ? '24px sans-serif' : '18px sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // Add glow effect for recently added objects
-        if (isRecent) {
-          ctx.shadowColor = '#FFD700';
+        // Add glow effect for recently added objects or being dragged
+        if (isRecent || isBeingDragged) {
+          ctx.shadowColor = isBeingDragged ? '#3B82F6' : '#FFD700';
           ctx.shadowBlur = 15;
           ctx.fillStyle = '#FFFFFF';
         } else {
@@ -360,6 +441,15 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
             ctx.arc(objPos.x + sparkle.x, objPos.y + sparkle.y, 2, 0, Math.PI * 2);
             ctx.fill();
           });
+        }
+        
+        // Draw blue outline for being dragged
+        if (isBeingDragged) {
+          ctx.strokeStyle = '#3B82F6';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(objPos.x, objPos.y - 10, 20, 0, Math.PI * 2);
+          ctx.stroke();
         }
       });
     });
@@ -542,20 +632,51 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
     const rotatedX = worldX * cos - worldY * sin;
     const rotatedY = worldX * sin + worldY * cos;
 
-    // Convert from isometric to grid coordinates
-    const gridX = (rotatedX / 30 + rotatedY / 15) / 0.866;
-    const gridY = (rotatedY / 15 - rotatedX / 30) / 0.866;
+    // Helper function for isometric projection (must match rendering)
+    const toIsometric = (x: number, y: number, z: number = 0) => {
+      const isoX = (x - y) * 0.866;
+      const isoY = (x + y) * 0.5 - z;
+      return { x: isoX * 30, y: isoY * 30 };
+    };
 
-    // Increased clickable margin - makes it easier to click on rooms
-    const clickMargin = 0.5; // 0.5 units of margin around each room
+    // Point-in-polygon test for isometric room quad
+    const pointInIsometricRoom = (px: number, py: number, roomX: number, roomY: number, width: number, depth: number): boolean => {
+      // Get the four corners of the room in isometric space
+      const p1 = toIsometric(roomX, roomY);
+      const p2 = toIsometric(roomX + width, roomY);
+      const p3 = toIsometric(roomX + width, roomY + depth);
+      const p4 = toIsometric(roomX, roomY + depth);
 
-    // Check which room contains this point (with expanded hitbox)
-    for (const room of rooms) {
-      const depth = room.dimensions.depth || room.dimensions.width;
-      if (gridX >= room.position.x - clickMargin && 
-          gridX <= room.position.x + room.dimensions.width + clickMargin &&
-          gridY >= room.position.y - clickMargin && 
-          gridY <= room.position.y + depth + clickMargin) {
+      // Point-in-polygon test using ray casting
+      const vertices = [p1, p2, p3, p4];
+      let inside = false;
+
+      for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
+        const xi = vertices[i].x;
+        const yi = vertices[i].y;
+        const xj = vertices[j].x;
+        const yj = vertices[j].y;
+
+        const intersect = ((yi > py) !== (yj > py)) &&
+          (px < (xj - xi) * (py - yi) / (yj - yi) + xi);
+        
+        if (intersect) inside = !inside;
+      }
+
+      return inside;
+    };
+
+    // Check rooms in reverse order (top rooms first for better UX)
+    for (let i = rooms.length - 1; i >= 0; i--) {
+      const room = rooms[i];
+      
+      // Account for room rotation when calculating dimensions
+      const isRotated = (room.rotation === 90 || room.rotation === 270);
+      const effectiveWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+      const effectiveDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+      
+      // Check if point is inside the room's isometric footprint
+      if (pointInIsometricRoom(rotatedX, rotatedY, room.position.x, room.position.y, effectiveWidth, effectiveDepth)) {
         return room.id;
       }
     }
@@ -606,9 +727,9 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         // Define hitbox size based on object dimensions
         // Objects are rendered as icons, so we use a reasonable clickable area
         const hitboxRadius = Math.max(
-          obj.type.dimensions.width * 15, // Scale to isometric space
-          obj.type.dimensions.height * 15,
-          20 // Minimum clickable radius
+          obj.type.dimensions.width * 22, // Scale to isometric space (increased from 15)
+          obj.type.dimensions.height * 22, // Increased from 15
+          35 // Minimum clickable radius (increased from 20)
         );
         
         // Calculate distance from mouse to object center
@@ -628,32 +749,52 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
 
   // Mouse event handlers for camera interaction
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const clickedRoom = getRoomAtPosition(e.clientX, e.clientY);
+    // Check for objects first (higher priority than rooms)
+    const clickedObject = getObjectAtPosition(e.clientX, e.clientY);
     
-    if (clickedRoom && !e.shiftKey && !e.ctrlKey) {
-      // Start room dragging - ONLY set room-specific states
-      setDragMode('room'); // Set mode first
-      setIsDraggingRoom(true);
-      setDraggedRoom(clickedRoom);
+    if (clickedObject && !e.shiftKey && !e.ctrlKey) {
+      // Start object dragging
+      setDragMode('object');
+      setIsDraggingObject(true);
+      setDraggedObject({ objectId: clickedObject.object.id, roomId: clickedObject.room.id });
       
-      const room = rooms.find(r => r.id === clickedRoom);
-      if (room) {
-        setDragStartPos({ x: room.position.x, y: room.position.y });
-        setPreviewPosition({ x: room.position.x, y: room.position.y, z: room.position.z || 0 });
-      }
+      setObjectPreviewPosition({ 
+        x: clickedObject.object.position.x, 
+        y: clickedObject.object.position.y, 
+        z: clickedObject.object.position.z || 0 
+      });
       
-      setIsDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
-    } else if (e.shiftKey) {
-      // Shift for rotation - camera control
-      setDragMode('rotate'); // Set mode first
       setIsDragging(true);
       setDragStart({ x: e.clientX, y: e.clientY });
     } else {
-      // Default to pan - camera control
-      setDragMode('pan'); // Set mode first
-      setIsDragging(true);
-      setDragStart({ x: e.clientX, y: e.clientY });
+      const clickedRoom = getRoomAtPosition(e.clientX, e.clientY);
+      
+      if (clickedRoom && !e.shiftKey && !e.ctrlKey) {
+        // Start room dragging - ONLY set room-specific states
+        setDragMode('room'); // Set mode first
+        setIsDraggingRoom(true);
+        setDraggedRoom(clickedRoom);
+        
+        const room = rooms.find(r => r.id === clickedRoom);
+        if (room) {
+          setPreviewRotation(room.rotation || 0); // Initialize from room's current rotation
+          setDragStartPos({ x: room.position.x, y: room.position.y });
+          setPreviewPosition({ x: room.position.x, y: room.position.y, z: room.position.z || 0 });
+        }
+        
+        setIsDragging(true);
+        setDragStart({ x: e.clientX, y: e.clientY });
+      } else if (e.shiftKey) {
+        // Shift for rotation - camera control
+        setDragMode('rotate'); // Set mode first
+        setIsDragging(true);
+        setDragStart({ x: e.clientX, y: e.clientY });
+      } else {
+        // Default to pan - camera control
+        setDragMode('pan'); // Set mode first
+        setIsDragging(true);
+        setDragStart({ x: e.clientX, y: e.clientY });
+      }
     }
     
     e.preventDefault();
@@ -715,20 +856,30 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           z: room.position.z || 0
         };
         
-        // Clamp to grid bounds
-        const maxX = 20 - room.dimensions.width;
-        const maxY = 20 - (room.dimensions.depth || room.dimensions.width);
+        // Calculate dimensions considering rotation
+        const isRotated = previewRotation === 90 || previewRotation === 270;
+        const roomWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+        const roomDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+        
+        // Clamp to grid bounds with rotated dimensions
+        const maxX = 20 - roomWidth;
+        const maxY = 20 - roomDepth;
         const clampedPosition = {
           x: Math.max(0, Math.min(maxX, newPosition.x)),
           y: Math.max(0, Math.min(maxY, newPosition.y)),
           z: Math.max(0, newPosition.z)
         };
         
-        // Check for overlap with other rooms
+        // Check for overlap with other rooms using rotated dimensions
         const otherRooms = rooms.filter(r => r.id !== draggedRoom);
+        const testDimensions = {
+          width: roomWidth,
+          height: room.dimensions.height,
+          depth: roomDepth
+        };
         const wouldOverlap = wouldRoomOverlap(
           clampedPosition,
-          room.dimensions,
+          testDimensions,
           otherRooms
         );
         
@@ -738,20 +889,61 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         // Update preview position
         setPreviewPosition(clampedPosition);
       }
+    } else if (dragMode === 'object' && draggedObject) {
+      // Move the object with preview
+      const room = rooms.find(r => r.id === draggedObject.roomId);
+      const obj = room?.objects.find(o => o.id === draggedObject.objectId);
+      
+      if (room && obj && objectPreviewPosition) {
+        // Convert mouse movement to grid movement
+        const gridDeltaX = Math.round(deltaX / (20 * cameraZoom));
+        const gridDeltaY = Math.round(deltaY / (20 * cameraZoom));
+        
+        const newPosition = {
+          x: objectPreviewPosition.x + gridDeltaX,
+          y: objectPreviewPosition.y + gridDeltaY,
+          z: objectPreviewPosition.z
+        };
+        
+        // Keep object within room bounds
+        const minX = room.position.x;
+        const maxX = room.position.x + room.dimensions.width - obj.type.dimensions.width;
+        const minY = room.position.y;
+        const maxY = room.position.y + (room.dimensions.depth || room.dimensions.width) - obj.type.dimensions.height;
+        
+        const clampedPosition = {
+          x: Math.max(minX, Math.min(maxX, newPosition.x)),
+          y: Math.max(minY, Math.min(maxY, newPosition.y)),
+          z: newPosition.z
+        };
+        
+        setObjectPreviewPosition(clampedPosition);
+      }
     }
   };
 
   const handleMouseUp = () => {
-    // If we were dragging a room, finalize the position
+    // If we were dragging a room, finalize the position and rotation
     if (isDraggingRoom && draggedRoom && previewPosition) {
-      onRoomMove(draggedRoom, previewPosition);
+      onRoomMove(draggedRoom, previewPosition, previewRotation);
+    }
+    
+    // If we were dragging an object, finalize the position
+    if (isDraggingObject && draggedObject && objectPreviewPosition && onObjectMove) {
+      onObjectMove(draggedObject.roomId, draggedObject.objectId, objectPreviewPosition);
     }
     
     setIsDragging(false);
     setIsDraggingRoom(false);
     setDraggedRoom(null);
     setPreviewPosition(null);
+    setPreviewRotation(0); // Reset preview rotation state
     setHasOverlap(false); // Reset overlap state
+    
+    // Reset object dragging states
+    setIsDraggingObject(false);
+    setDraggedObject(null);
+    setObjectPreviewPosition(null);
   };
 
   const handleWheel = (e: React.WheelEvent<HTMLCanvasElement>) => {
@@ -819,6 +1011,7 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
         <div className="absolute top-2 right-2 bg-black/50 backdrop-blur-sm rounded-lg p-2 text-xs text-white">
           <div className="text-cyan-400 font-semibold mb-1">Controls</div>
           <div>🖱️ Click + Drag Room: Move it</div>
+          <div>🖱️ Click + Drag Object: Move it</div>
           <div>🖱️ Click + Drag Empty: Pan</div>
           <div>⇧ Shift + Drag: Rotate</div>
           <div>🖱️ Scroll: Zoom</div>
@@ -826,12 +1019,18 @@ export const IsometricView: React.FC<IsometricViewProps> = ({
           <div>⌨️ Arrow Keys: Rotate</div>
           <div>⌨️ R: Reset rotation</div>
           <div>⌨️ Ctrl+R: Reset camera</div>
+          {isDraggingRoom && (
+            <div className="text-green-400 border-t border-white/20 pt-1 mt-1">
+              ⌨️ R: Rotate room 90° (will be saved)
+            </div>
+          )}
           <div className="mt-1 text-cyan-400 border-t border-white/20 pt-1">
             Zoom: {Math.round(cameraZoom * 100)}% | Angle: {Math.round(cameraRotation)}°
           </div>
           {draggedRoom && (
             <div className="text-yellow-400 border-t border-white/20 pt-1 animate-pulse">
               🔄 Dragging: {rooms.find(r => r.id === draggedRoom)?.name}
+              {previewRotation > 0 && ` (${previewRotation}° rotation will be applied)`}
             </div>
           )}
         </div>

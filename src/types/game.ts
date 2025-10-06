@@ -35,6 +35,7 @@ export interface Room {
   name: string;
   position: Position;
   dimensions: Dimensions;
+  rotation?: number; // Rotation angle in degrees (0, 90, 180, 270)
   isValid: boolean;
   requiredArea: number;
   actualArea: number;
