@@ -20,12 +20,16 @@ export function checkRoomOverlap(room1: Room, room2: Room): boolean {
  * Get the 3D bounds of a room
  */
 export function getRoomBounds(room: Room) {
-  const depth = room.dimensions.depth || room.dimensions.width;
+  // Account for room rotation when calculating dimensions
+  const isRotated = room.rotation === 90 || room.rotation === 270;
+  const effectiveWidth = isRotated ? (room.dimensions.depth || room.dimensions.width) : room.dimensions.width;
+  const effectiveDepth = isRotated ? room.dimensions.width : (room.dimensions.depth || room.dimensions.width);
+  
   return {
     minX: room.position.x,
-    maxX: room.position.x + room.dimensions.width,
+    maxX: room.position.x + effectiveWidth,
     minY: room.position.y,
-    maxY: room.position.y + depth,
+    maxY: room.position.y + effectiveDepth,
     minZ: room.position.z || 0,
     maxZ: (room.position.z || 0) + room.dimensions.height
   };
