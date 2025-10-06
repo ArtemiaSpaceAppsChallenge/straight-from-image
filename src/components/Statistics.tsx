@@ -3,29 +3,47 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useTranslations } from "@/lib/translations";
 
 const stats = [
+  // {
+  //   icon: Gauge,
+  //   value: "25–35 m³",
+  //   label: "Net Habitable Volume / Crew",
+  //   description: "Minimum for >180-day missions (NASA MIG Study)",
+  // },
+  // {
+  //   icon: Shield,
+  //   value: ">98%",
+  //   label: "Radiation Shielding Efficiency",
+  //   description: "50 cm regolith or 20 g/cm² water-equivalent barrier",
+  // },
+  // {
+  //   icon: Clock,
+  //   value: "15+ years",
+  //   label: "Structural Material Longevity",
+  //   description: "Kevlar/Vectran tested durability for inflatables",
+  // },
+  // {
+  //   icon: Users,
+  //   value: "4–6 Crew",
+  //   label: "Crew Configuration Range",
+  //   description: "Typical Mars transit & surface mission teams",
+  // },
   {
-    icon: Gauge,
-    value: "25–35 m³",
-    label: "Net Habitable Volume / Crew",
-    description: "Minimum for >180-day missions (NASA MIG Study)",
-  },
-  {
-    icon: Shield,
-    value: ">98%",
-    label: "Radiation Shielding Efficiency",
-    description: "50 cm regolith or 20 g/cm² water-equivalent barrier",
-  },
-  {
-    icon: Clock,
-    value: "15+ years",
-    label: "Structural Material Longevity",
-    description: "Kevlar/Vectran tested durability for inflatables",
+    icon: Activity,
+    value: "Real-time",
+    label: "Resource Simulation",
+    description: "O₂, H₂O, power & food consumption",
   },
   {
     icon: Users,
-    value: "4–6 Crew",
-    label: "Crew Configuration Range",
-    description: "Typical Mars transit & surface mission teams",
+    value: "4-12 crew",
+    label: "Dynamic AI Crew",
+    description: "Individual needs, skills & behavior",
+  },
+  {
+    icon: AlertTriangle,
+    value: "12+ rules",
+    label: "Validation Rules",
+    description: "Noise, adjacency & compatibility checks",
   },
 ];
 
