@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -10,13 +10,14 @@ const teamMembersBase = [
     role: "Software Engineer",
     description: "Developer with 6+ years shaping ideas into code",
     image: "https://i.imgur.com/g47hhrQ.jpeg",
-    easterEggImage: "https://i.imgur.com/QWYulvP.jpeg", // nova imagem
+    easterEggImage: "https://i.imgur.com/QWYulvP.jpeg",
   },
   {
     name: "Lukas B. de Oliveira",
     role: "Software Engineer",
     description: "The cake is a lie",
     image: "https://i.imgur.com/qt9mGS0.jpeg",
+    easterEggImage: "https://i.imgur.com/5YwtfrV.jpeg",
   },
   {
     name: "Bruno Gaidargi",
@@ -49,23 +50,42 @@ const teamMembersBase = [
 const About = () => {
   const { language } = useLanguage();
   const t = useTranslations(language);
-  const [robertoClicks, setRobertoClicks] = useState(0);
-  const [easterEggActive, setEasterEggActive] = useState(false);
 
-  const handleEasterEggClick = () => {
+  const [robertoClicks, setRobertoClicks] = useState(0);
+  const [easterEggRoberto, setEasterEggRoberto] = useState(false);
+  const [easterEggLukas, setEasterEggLukas] = useState(false);
+  const holdTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const handleRobertoClick = () => {
     setRobertoClicks((prev) => {
       const newCount = prev + 1;
-      if (newCount >= 23 && !easterEggActive) {
-        setEasterEggActive(true);
+      if (newCount >= 23 && !easterEggRoberto) {
+        setEasterEggRoberto(true);
       }
       return newCount;
     });
   };
 
-  const teamMembers = teamMembersBase.map((member) => {
-    if (member.name === "Roberto Braga" && easterEggActive) {
-      return { ...member, image: member.easterEggImage };
+  const handleLukasHoldStart = () => {
+    if (!easterEggLukas) {
+      holdTimer.current = setTimeout(() => {
+        setEasterEggLukas(true);
+      }, 5000); // 5 segundos
     }
+  };
+
+  const handleLukasHoldEnd = () => {
+    if (holdTimer.current) {
+      clearTimeout(holdTimer.current);
+      holdTimer.current = null;
+    }
+  };
+
+  const teamMembers = teamMembersBase.map((member) => {
+    if (member.name === "Roberto Braga" && easterEggRoberto)
+      return { ...member, image: member.easterEggImage };
+    if (member.name === "Lukas B. de Oliveira" && easterEggLukas)
+      return { ...member, image: member.easterEggImage };
     return member;
   });
 
@@ -88,8 +108,13 @@ const About = () => {
               <CardHeader className="text-center">
                 <div className="flex justify-center mb-4">
                   <Avatar
-                    className="w-20 h-20 md:w-24 md:h-24 overflow-hidden cursor-pointer"
-                    onClick={member.name === "Roberto Braga" ? handleEasterEggClick : undefined}
+                    className="w-20 h-20 md:w-24 md:h-24 overflow-hidden cursor-pointer select-none"
+                    onClick={member.name === "Roberto Braga" ? handleRobertoClick : undefined}
+                    onMouseDown={member.name === "Lukas B. de Oliveira" ? handleLukasHoldStart : undefined}
+                    onMouseUp={member.name === "Lukas B. de Oliveira" ? handleLukasHoldEnd : undefined}
+                    onMouseLeave={member.name === "Lukas B. de Oliveira" ? handleLukasHoldEnd : undefined}
+                    onTouchStart={member.name === "Lukas B. de Oliveira" ? handleLukasHoldStart : undefined}
+                    onTouchEnd={member.name === "Lukas B. de Oliveira" ? handleLukasHoldEnd : undefined}
                   >
                     <AvatarImage
                       src={member.image}
