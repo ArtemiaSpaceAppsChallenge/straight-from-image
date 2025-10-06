@@ -7,7 +7,7 @@ const teamMembers = [
   {
     name: "Roberto Braga",
     role: "Software Engineer",
-    description: "God help us all",
+    description: "Developer with 6+ years shaping ideas into code",
     image: "https://i.imgur.com/g47hhrQ.jpeg",
   },
   {
@@ -36,9 +36,10 @@ const teamMembers = [
     image: "https://i.imgur.com/96sm8ja.jpeg",
   },
   {
-    name: "Mariana Silva Gimenez",
-    role: "CS student",
-    description: "I don't know",
+  name: "Mariana Gimenez",
+  role: "Software Developer",
+  description:
+    "Ex-lawyer turned developer specializing in React, JavaScript, and Python. Focused on LegalTech, automations, and making tech feel human.",
     image: "https://i.imgur.com/IieI7xv.jpeg",
   },
 ];
