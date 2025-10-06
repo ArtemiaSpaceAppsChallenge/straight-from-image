@@ -17,20 +17,20 @@ const teamMembers = [
     image: "https://i.imgur.com/qt9mGS0.jpeg",
   },
   {
-    name: "Bruno Miranda Gaidargi",
+    name: "Bruno Gaidargi",
     role: "Scientific Researcher",
     description: "Mitochondria is the powerhouse of the cell",
     image: "https://i.imgur.com/c4bY9ib.jpeg",
   },
   {
-    name: "Márcio Machado Pontes",
+    name: "Márcio Machado",
     role: "Interactive Experience Engineer",
     description:
       "Develops interactive and immersive web experiences combining AI, visualization, and advanced frontend technologies.",
     image: "https://i.imgur.com/73YrIrv.jpeg",
   },
   {
-    name: "Cauê Vaz de Lima",
+    name: "Cauê Lima",
     role: "Junior Developer",
     description: "Most beautiful man of the world",
     image: "https://i.imgur.com/96sm8ja.jpeg",
